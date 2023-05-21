@@ -12,31 +12,22 @@ TODO
 
 ## Developer Notes
 
-Install the NET HTTP REPL command-line tool for making HTTP requests to the Web
-API.
+Install and build the project:
 
 ```powershell
-dotnet tool install -g Microsoft.dotnet-httprepl
-```
-
-Configure your system to trust the dev certificate:
-
-```powershell
-dotnet dev-certs https --trust
+.\scripts\install.ps1 -Environment Development
 ```
 
 Launch the backend:
 
 ```powershell
-$project = "AdvancedSystems.Backend"
-dotnet build $project
-dotnet run --project=$project
+dotnet run --project="AdvancedSystems.Backend"
 ```
 
 Open swagger:
 
 ```powershell
-start https://localhost:5001/swagger/
+start https://localhost:5001/
 ```
 
 Or connect to the web API with `httprepl`:
