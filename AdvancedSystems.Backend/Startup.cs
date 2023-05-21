@@ -1,3 +1,7 @@
+using NLog;
+using NLog.Extensions.Logging;
+using NLog.Web;
+
 namespace AdvancedSystems.Backend;
 
 public class Startup
@@ -9,8 +13,16 @@ public class Startup
 
     public IConfiguration Configuration { get; }
 
+    private static readonly NLog.ILogger Logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
+
     public void ConfigureServices(IServiceCollection services)
     {
+        services.AddLogging(service =>
+        {
+            service.ClearProviders();
+            service.AddNLog();
+        });
+
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
@@ -34,7 +46,8 @@ public class Startup
 
         app.UseAuthorization();
 
-        app.UseEndpoints(endpoints => {
+        app.UseEndpoints(endpoints =>
+        {
             endpoints.MapControllers();
         });
     }
