@@ -1,7 +1,9 @@
 using AdvancedSystems.Backend.Models;
+using AdvancedSystems.Backend.Models.Core;
 using AdvancedSystems.Backend.Service;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace AdvancedSystems.Backend.Controllers;
 
@@ -9,10 +11,14 @@ namespace AdvancedSystems.Backend.Controllers;
 [Route("api/v1/[controller]")]
 public class BookController : BaseController
 {
-    public BookController(ILogger<BookController> logger) : base(logger)
+    public BookController(ILogger<BookController> logger, IOptions<AppSettings> configuration) : base(logger)
     {
+        if (configuration is null) throw new ArgumentNullException(nameof(configuration));
 
+        AppSettings = configuration.Value;
     }
+
+    private AppSettings AppSettings { get; }
 
     #region CRUD
 
@@ -27,6 +33,7 @@ public class BookController : BaseController
     [HttpGet]
     public ActionResult<List<Book>> GetAll()
     {
+        Logger.LogDebug($"Test Configuration: {AppSettings.Test}");
         Logger.LogDebug("Get all books");
         return BookService.GetAll();
     }

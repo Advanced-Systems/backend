@@ -1,3 +1,5 @@
+using AdvancedSystems.Backend.Extensions;
+
 using NLog;
 using NLog.Web;
 
@@ -5,14 +7,23 @@ namespace AdvancedSystems.Backend;
 
 public class Program
 {
-    private static readonly NLog.ILogger Logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
+    private static readonly NLog.ILogger Logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
     public static void Main(string[] args)
     {
         try
         {
-            var builder = CreateHostBuilder(args).Build();
+            Logger.Trace("Reading configuration file");
+            IConfigurationRoot configurationRoot = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddCustomJsonFile("appsettings.json", true, true)
+                .Build();
+
+            var host = CreateHostBuilder(args, configurationRoot);
+
             Logger.Info("Starting Backend");
+            var builder = host.Build();
+
             builder.Run();
         }
         catch (Exception exception)
@@ -27,12 +38,14 @@ public class Program
         }
     }
 
-    private static IHostBuilder CreateHostBuilder(string[] args)
+    private static IHostBuilder CreateHostBuilder(string[] args, IConfigurationRoot configurationRoot)
     {
         return Host.CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(builder =>
             {
-                builder.UseStartup<Startup>();
+                builder
+                    .UseConfiguration(configurationRoot)
+                    .UseStartup<Startup>();
             });
     }
 }
