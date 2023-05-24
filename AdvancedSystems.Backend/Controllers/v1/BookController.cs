@@ -1,3 +1,4 @@
+using AdvancedSystems.Backend.Contracts;
 using AdvancedSystems.Backend.Models;
 using AdvancedSystems.Backend.Models.Core;
 using AdvancedSystems.Backend.Service;
@@ -8,7 +9,6 @@ using Microsoft.Extensions.Options;
 namespace AdvancedSystems.Backend.Controllers;
 
 [ApiController]
-[Route("api/v1/[controller]")]
 public class BookController : BaseController
 {
     public BookController(ILogger<BookController> logger, IOptions<AppSettings> configuration) : base(logger)
@@ -22,7 +22,7 @@ public class BookController : BaseController
 
     #region CRUD
 
-    [HttpPost]
+    [HttpPost(ApiRoutes.BookVersion1.Create)]
     public IActionResult Create(Book book)
     {
         BookService.Add(book);
@@ -30,7 +30,7 @@ public class BookController : BaseController
         return CreatedAtAction(nameof(Get), new { Id = book.Id }, book);
     }
 
-    [HttpGet]
+    [HttpGet(ApiRoutes.BookVersion1.GetAll)]
     public ActionResult<List<Book>> GetAll()
     {
         Logger.LogDebug($"Test Configuration: {AppSettings.Test}");
@@ -38,7 +38,7 @@ public class BookController : BaseController
         return BookService.GetAll();
     }
 
-    [HttpGet("{id}")]
+    [HttpGet(ApiRoutes.BookVersion1.Get)]
     public ActionResult<Book> Get(int id)
     {
         var book = BookService.Get(id);
@@ -47,7 +47,7 @@ public class BookController : BaseController
         return book;
     }
 
-    [HttpPut("{id}")]
+    [HttpPut(ApiRoutes.BookVersion1.Update)]
     public IActionResult Update(int id, Book book)
     {
         if (id != book.Id) return BadRequest();
@@ -60,7 +60,7 @@ public class BookController : BaseController
         return NoContent();
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete(ApiRoutes.BookVersion1.Delete)]
     public IActionResult Delete(int id)
     {
         var book = BookService.Get(id);
