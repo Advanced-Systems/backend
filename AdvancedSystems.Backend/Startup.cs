@@ -1,4 +1,7 @@
 using AdvancedSystems.Backend.Models.Core;
+using AdvancedSystems.Backend.Configuration;
+
+using Microsoft.OpenApi.Models;
 
 using NLog;
 using NLog.Extensions.Logging;
@@ -11,9 +14,13 @@ public class Startup
     public Startup(IConfiguration configuration)
     {
         Configuration = configuration;
+        SwaggerSettings = new SwaggerSettings();
+        Configuration.GetSection(nameof(SwaggerSettings)).Bind(SwaggerSettings);
     }
 
     public IConfiguration Configuration { get; }
+
+    public SwaggerSettings SwaggerSettings { get; }
 
     private static readonly NLog.ILogger Logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
@@ -43,7 +50,12 @@ public class Startup
         services.AddEndpointsApiExplorer();
 
         Logger.Trace("Add swagger service generation");
-        services.AddSwaggerGen();
+        services.AddSwaggerGen(gen  => {
+            gen.SwaggerDoc("v1", new OpenApiInfo {
+                Title = SwaggerSettings.Title,
+                Version = SwaggerSettings.Version,
+            });
+        });
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -53,10 +65,13 @@ public class Startup
         if (env.IsDevelopment())
         {
             Logger.Trace("Turning on swagger");
-            app.UseSwagger();
+            app.UseSwagger(option => {
+                option.RouteTemplate = SwaggerSettings.JsonRoute;
+            });
+
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                options.SwaggerEndpoint(SwaggerSettings.UiEndpoint, SwaggerSettings.Version);
                 options.RoutePrefix = string.Empty;
             });
 
@@ -72,6 +87,9 @@ public class Startup
 
         Logger.Trace("Enabling HTTPS");
         app.UseHttpsRedirection();
+
+        Logger.Trace("Enabling static file serving");
+        app.UseStaticFiles();
 
         Logger.Trace("Configuring routing");
         app.UseRouting();
