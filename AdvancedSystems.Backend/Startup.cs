@@ -28,6 +28,9 @@ public class Startup
             service.AddNLog();
         });
 
+        Logger.Trace("Add health checks");
+        services.AddHealthChecks();
+
         Logger.Trace("Initiating AppSettings");
         services.AddOptions();
         IConfigurationSection appSettingsSection = this.Configuration.GetSection("AppSettings");
@@ -56,10 +59,18 @@ public class Startup
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
                 options.RoutePrefix = string.Empty;
             });
+
+            app.UseDeveloperExceptionPage();
+        }
+        else
+        {
+            app.UseHsts();
         }
 
+        Logger.Trace("Use health checks");
+        app.UseHealthChecks("/health");
+
         Logger.Trace("Enabling HTTPS");
-        app.UseHsts();
         app.UseHttpsRedirection();
 
         Logger.Trace("Configuring routing");
