@@ -3,11 +3,13 @@ using AdvancedSystems.Backend.Extensions;
 using NLog;
 using NLog.Web;
 
+using ILogger = NLog.Logger;
+
 namespace AdvancedSystems.Backend;
 
 public class Program
 {
-    private static readonly NLog.ILogger Logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
+    private static readonly ILogger Logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
     public static void Main(string[] args)
     {
@@ -34,7 +36,7 @@ public class Program
         finally
         {
             Logger.Info("Shutting down...");
-            NLog.LogManager.Shutdown();
+            LogManager.Shutdown();
         }
     }
 
