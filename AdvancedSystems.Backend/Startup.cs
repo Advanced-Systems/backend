@@ -3,9 +3,13 @@ using AdvancedSystems.Backend.Configuration;
 
 using Microsoft.OpenApi.Models;
 
+using Asp.Versioning;
+using Asp.Versioning.Conventions;
 using NLog;
 using NLog.Extensions.Logging;
 using NLog.Web;
+
+using ILogger = NLog.Logger;
 
 namespace AdvancedSystems.Backend;
 
@@ -14,15 +18,25 @@ public class Startup
     public Startup(IConfiguration configuration)
     {
         Configuration = configuration;
+
         SwaggerSettings = new SwaggerSettings();
         Configuration.GetSection(nameof(SwaggerSettings)).Bind(SwaggerSettings);
+
+        AppSettings = new AppSettings();
+        Configuration.GetSection(nameof(AppSettings)).Bind(AppSettings);
+
+        DefaultApiVersion = $"v{AppSettings.DefaultApiVersion}";
     }
 
     public IConfiguration Configuration { get; }
 
     public SwaggerSettings SwaggerSettings { get; }
 
-    private static readonly NLog.ILogger Logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
+    public AppSettings AppSettings { get; }
+
+    private string DefaultApiVersion { get; }
+
+    private static readonly ILogger Logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
     public void ConfigureServices(IServiceCollection services)
     {
@@ -38,10 +52,17 @@ public class Startup
         Logger.Trace("Add health checks");
         services.AddHealthChecks();
 
-        Logger.Trace("Initiating AppSettings");
+        Logger.Trace("Add API Versioning");
+        services.AddApiVersioning(options => {
+            options.DefaultApiVersion = new ApiVersion(AppSettings.DefaultApiVersion);
+            options.ReportApiVersions = true;
+            options.AssumeDefaultVersionWhenUnspecified = true;
+            options.ApiVersionReader = new HeaderApiVersionReader("api-version");
+        });
+
+        Logger.Trace("Initiating Settings");
         services.AddOptions();
-        IConfigurationSection appSettingsSection = this.Configuration.GetSection("AppSettings");
-        services.Configure<AppSettings>(appSettingsSection);
+        services.Configure<AppSettings>(this.Configuration.GetSection(nameof(AppSettings)));
 
         Logger.Trace("Add controllers");
         services.AddControllers();
@@ -51,9 +72,9 @@ public class Startup
 
         Logger.Trace("Add swagger service generation");
         services.AddSwaggerGen(gen  => {
-            gen.SwaggerDoc("v1", new OpenApiInfo {
+            gen.SwaggerDoc(DefaultApiVersion, new OpenApiInfo {
                 Title = SwaggerSettings.Title,
-                Version = SwaggerSettings.Version,
+                Version = DefaultApiVersion,
             });
         });
     }
@@ -66,12 +87,13 @@ public class Startup
         {
             Logger.Trace("Turning on swagger");
             app.UseSwagger(option => {
-                option.RouteTemplate = SwaggerSettings.JsonRoute;
+                option.RouteTemplate = "swagger/{documentName}/swagger.json";
             });
 
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint(SwaggerSettings.UiEndpoint, SwaggerSettings.Version);
+                string url = $"swagger/{DefaultApiVersion}/swagger.json";
+                options.SwaggerEndpoint(url, DefaultApiVersion);
                 options.RoutePrefix = string.Empty;
             });
 
@@ -100,7 +122,15 @@ public class Startup
         Logger.Trace("Configuring endpoints");
         app.UseEndpoints(endpoints =>
         {
-            endpoints.MapControllers();
+            Logger.Trace("Configure API Versioning");
+            var apiVersionSet = endpoints.NewApiVersionSet()
+                .HasApiVersion(new ApiVersion(AppSettings.DefaultApiVersion))
+                .ReportApiVersions()
+                .Build();
+
+            endpoints.MapControllers()
+                .WithApiVersionSet(apiVersionSet)
+                .MapToApiVersion(AppSettings.DefaultApiVersion);
         });
     }
 }

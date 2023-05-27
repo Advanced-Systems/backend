@@ -2,13 +2,15 @@ using AdvancedSystems.Backend.Models;
 using AdvancedSystems.Backend.Models.Core;
 using AdvancedSystems.Backend.Service;
 
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
 namespace AdvancedSystems.Backend.Controllers;
 
 [ApiController]
-[Route("api/v1/[controller]")]
+[ApiVersion("1")]
+[Route("api/v{version:apiVersion}/[controller]")]
 public class BookController : BaseController
 {
     public BookController(ILogger<BookController> logger, IOptions<AppSettings> configuration) : base(logger)
