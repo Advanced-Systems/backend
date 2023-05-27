@@ -12,6 +12,12 @@ TODO
 
 ## Developer Notes
 
+Project requirements:
+
+```powershell
+winget install microsoft.dotnet.sdk.7
+```
+
 Install and build the project:
 
 ```powershell
