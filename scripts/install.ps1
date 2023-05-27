@@ -5,12 +5,13 @@ param(
 begin {
     Push-Location -Path $(git rev-parse --show-toplevel)
     $Project = "AdvancedSystems.Backend"
+    $ConfigFile = "$Project/nuget.config"
 }
 process {
-    Write-Host "Install tools" -ForegroundColor Yellow
-    dotnet tool install --global microsoft.dotnet-httprepl
-
     if ($Environment -eq "Development") {
+        Write-Host "Install tools" -ForegroundColor Yellow
+        dotnet tool install --global microsoft.dotnet-httprepl --configfile $ConfigFile
+
         Write-Host "Configure project" -ForegroundColor Yellow
         git config --local core.autocrl=true
 
@@ -23,8 +24,8 @@ process {
     }
 
     Write-Host "Build $Project" -ForegroundColor Yellow
-    dotnet restore $Project
-    dotnet build $Project
+    dotnet restore $Project --configfile $ConfigFile --verbosity minimal
+    dotnet build $Project --nologo
 }
 clean {
     Pop-Location
