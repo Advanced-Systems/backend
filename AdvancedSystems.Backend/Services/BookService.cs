@@ -16,7 +16,7 @@ public static class BookService
             new Book{ Id = 3, Author = "G. Stephenson", Title = "Mathematical Methods for Science Students" },
         };
 
-        nextId = 3;
+        nextId = Books.Count;
     }
 
     #region CRUD
