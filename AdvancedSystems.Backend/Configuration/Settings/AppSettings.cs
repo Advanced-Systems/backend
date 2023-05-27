@@ -1,4 +1,4 @@
-namespace AdvancedSystems.Backend.Models.Core;
+namespace AdvancedSystems.Backend.Configuration.Settings;
 
 public class AppSettings
 {

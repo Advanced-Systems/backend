@@ -1,5 +1,4 @@
-using AdvancedSystems.Backend.Models.Core;
-using AdvancedSystems.Backend.Configuration;
+using AdvancedSystems.Backend.Configuration.Settings;
 
 using Microsoft.OpenApi.Models;
 
@@ -41,6 +40,9 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         Logger.Debug("Start service configuration");
+        services.Configure<RouteOptions>(options => {
+            options.LowercaseUrls = true;
+        });
 
         Logger.Trace("Add logging service");
         services.AddLogging(service =>

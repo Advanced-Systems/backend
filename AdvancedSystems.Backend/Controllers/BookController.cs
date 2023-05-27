@@ -1,5 +1,5 @@
 using AdvancedSystems.Backend.Models;
-using AdvancedSystems.Backend.Models.Core;
+using AdvancedSystems.Backend.Configuration.Settings;
 using AdvancedSystems.Backend.Service;
 
 using Asp.Versioning;

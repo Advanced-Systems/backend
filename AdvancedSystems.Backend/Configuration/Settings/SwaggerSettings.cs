@@ -1,4 +1,4 @@
-namespace AdvancedSystems.Backend.Configuration;
+namespace AdvancedSystems.Backend.Configuration.Settings;
 
 public class SwaggerSettings
 {
