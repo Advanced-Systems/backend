@@ -15,7 +15,7 @@ public class Program
     {
         try
         {
-            Logger.Trace("Reading configuration file");
+            Logger.Trace("Read configuration file");
             IConfigurationRoot configurationRoot = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddCustomJsonFile("appsettings.json", true, true)

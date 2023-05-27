@@ -40,7 +40,7 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        Logger.Debug("Starting backend service configuration");
+        Logger.Debug("Start service configuration");
 
         Logger.Trace("Add logging service");
         services.AddLogging(service =>
@@ -52,7 +52,7 @@ public class Startup
         Logger.Trace("Add health checks");
         services.AddHealthChecks();
 
-        Logger.Trace("Add API Versioning");
+        Logger.Trace("Add API versioning");
         services.AddApiVersioning(options => {
             options.DefaultApiVersion = new ApiVersion(AppSettings.DefaultApiVersion);
             options.ReportApiVersions = true;
@@ -60,7 +60,7 @@ public class Startup
             options.ApiVersionReader = new HeaderApiVersionReader("api-version");
         });
 
-        Logger.Trace("Initiating Settings");
+        Logger.Trace("Initialize settings");
         services.AddOptions();
         services.Configure<AppSettings>(this.Configuration.GetSection(nameof(AppSettings)));
 
@@ -81,11 +81,11 @@ public class Startup
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-        Logger.Debug("Starting backend configuration");
+        Logger.Debug("Start builder configuration");
 
         if (env.IsDevelopment())
         {
-            Logger.Trace("Turning on swagger");
+            Logger.Trace("Turn on swagger");
             app.UseSwagger(option => {
                 option.RouteTemplate = "swagger/{documentName}/swagger.json";
             });
@@ -104,25 +104,25 @@ public class Startup
             app.UseHsts();
         }
 
-        Logger.Trace("Use health checks");
+        Logger.Trace("Add health check");
         app.UseHealthChecks("/health");
 
-        Logger.Trace("Enabling HTTPS");
+        Logger.Trace("Enable HTTPS");
         app.UseHttpsRedirection();
 
-        Logger.Trace("Enabling static file serving");
+        Logger.Trace("Enable static file serving");
         app.UseStaticFiles();
 
-        Logger.Trace("Configuring routing");
+        Logger.Trace("Configure routing");
         app.UseRouting();
 
-        Logger.Trace("Configuring authorization");
+        Logger.Trace("Configure authorization");
         app.UseAuthorization();
 
-        Logger.Trace("Configuring endpoints");
+        Logger.Trace("Configure endpoints");
         app.UseEndpoints(endpoints =>
         {
-            Logger.Trace("Configure API Versioning");
+            Logger.Trace("Configure API versioning");
             var apiVersionSet = endpoints.NewApiVersionSet()
                 .HasApiVersion(new ApiVersion(AppSettings.DefaultApiVersion))
                 .ReportApiVersions()
