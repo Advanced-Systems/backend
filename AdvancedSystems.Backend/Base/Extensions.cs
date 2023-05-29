@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Configuration.Json;
 
-namespace AdvancedSystems.Backend.Extensions;
+namespace AdvancedSystems.Backend.Base;
 
 public static class Extensions
 {

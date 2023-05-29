@@ -1,3 +1,4 @@
+using AdvancedSystems.Backend.Base;
 using AdvancedSystems.Backend.Configuration.Settings;
 
 using Microsoft.OpenApi.Models;
@@ -5,7 +6,6 @@ using Microsoft.OpenApi.Models;
 using Asp.Versioning;
 using Asp.Versioning.Conventions;
 using NLog;
-using NLog.Extensions.Logging;
 using NLog.Web;
 
 using ILogger = NLog.Logger;
@@ -45,22 +45,13 @@ public class Startup
         });
 
         Logger.Trace("Add logging service");
-        services.AddLogging(service =>
-        {
-            service.ClearProviders();
-            service.AddNLog();
-        });
+        services.AddCustomLogging();
 
         Logger.Trace("Add health checks");
         services.AddHealthChecks();
 
         Logger.Trace("Add API versioning");
-        services.AddApiVersioning(options => {
-            options.DefaultApiVersion = new ApiVersion(AppSettings.DefaultApiVersion);
-            options.ReportApiVersions = true;
-            options.AssumeDefaultVersionWhenUnspecified = true;
-            options.ApiVersionReader = new HeaderApiVersionReader("api-version");
-        });
+        services.AddCustomApiVersioning(AppSettings.DefaultApiVersion);
 
         Logger.Trace("Initialize settings");
         services.AddOptions();
@@ -73,11 +64,11 @@ public class Startup
         services.AddEndpointsApiExplorer();
 
         Logger.Trace("Add swagger service generation");
-        services.AddSwaggerGen(gen  => {
-            gen.SwaggerDoc(DefaultApiVersion, new OpenApiInfo {
-                Title = SwaggerSettings.Title,
-                Version = DefaultApiVersion,
-            });
+        services.AddCustomSwaggerGen(new OpenApiInfo {
+            Title = SwaggerSettings.Title,
+            Version = DefaultApiVersion,
+            Contact = SwaggerSettings.Contact,
+            License = SwaggerSettings.License
         });
     }
 

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace AdvancedSystems.Backend;
+namespace AdvancedSystems.Backend.Base;
 
 public abstract class BaseController : ControllerBase
 {
