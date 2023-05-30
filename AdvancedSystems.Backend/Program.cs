@@ -1,4 +1,4 @@
-using AdvancedSystems.Backend.Base;
+using AdvancedSystems.Backend.Configuration;
 
 using NLog;
 using NLog.Web;

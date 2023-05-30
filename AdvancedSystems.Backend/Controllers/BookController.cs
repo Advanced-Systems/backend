@@ -11,6 +11,7 @@ namespace AdvancedSystems.Backend.Controllers;
 
 [ApiController]
 [ApiVersion("1")]
+[ApiExplorerSettings(GroupName = "Library")]
 [Produces("application/json")]
 [Route("api/[controller]")]
 public class BookController : BaseController
@@ -35,6 +36,7 @@ public class BookController : BaseController
     }
 
     [HttpGet]
+    [ApiVersion("2")]
     public ActionResult<List<Book>> GetAll()
     {
         Logger.LogDebug("Get all books");

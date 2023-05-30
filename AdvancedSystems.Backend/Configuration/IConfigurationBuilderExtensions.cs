@@ -1,11 +1,9 @@
 using Microsoft.Extensions.Configuration.Json;
 
-namespace AdvancedSystems.Backend.Base;
+namespace AdvancedSystems.Backend.Configuration;
 
-public static class Extensions
+public static class IConfigurationBuilderExtensions
 {
-    #region Startup
-
     public static IConfigurationBuilder AddCustomJsonFile(this IConfigurationBuilder builder, string path, bool optional, bool reloadOnChange)
     {
         if (builder is null) throw new ArgumentNullException(nameof(builder));
@@ -26,6 +24,4 @@ public static class Extensions
 
         return builder;
     }
-
-    #endregion
 }

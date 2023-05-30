@@ -1,9 +1,6 @@
-using AdvancedSystems.Backend.Base;
 using AdvancedSystems.Backend.Configuration;
 using AdvancedSystems.Backend.Configuration.Settings;
 
-using Asp.Versioning;
-using Asp.Versioning.Conventions;
 using NLog;
 using NLog.Web;
 using Microsoft.OpenApi.Models;
@@ -76,17 +73,8 @@ public class Startup
         if (env.IsDevelopment())
         {
             Logger.Trace("Turn on swagger");
-            app.UseSwagger(option => {
-                option.RouteTemplate = "swagger/{documentName}/swagger.json";
-            });
-
-            app.UseSwaggerUI(options =>
-            {
-                string url = $"swagger/{DefaultApiVersion}/swagger.json";
-                string name = DefaultApiVersion;
-                options.SwaggerEndpoint(url, name);
-                options.RoutePrefix = string.Empty;
-            });
+            app.UseCustomSwagger();
+            app.UseCustomSwaggerUI();
 
             app.UseDeveloperExceptionPage();
         }
@@ -111,17 +99,6 @@ public class Startup
         app.UseAuthorization();
 
         Logger.Trace("Configure endpoints");
-        app.UseEndpoints(endpoints =>
-        {
-            Logger.Trace("Configure API versioning");
-            var apiVersionSet = endpoints.NewApiVersionSet()
-                .HasApiVersion(new ApiVersion(AppSettings.DefaultApiVersion))
-                .ReportApiVersions()
-                .Build();
-
-            endpoints.MapControllers()
-                .WithApiVersionSet(apiVersionSet)
-                .MapToApiVersion(AppSettings.DefaultApiVersion);
-        });
+        app.UseCustomEndpoints(AppSettings.DefaultApiVersion);
     }
 }

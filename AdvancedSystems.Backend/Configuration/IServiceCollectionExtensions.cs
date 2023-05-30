@@ -3,8 +3,9 @@ using System.Reflection;
 using Asp.Versioning;
 using NLog.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Asp.Versioning.ApiExplorer;
 
-namespace AdvancedSystems.Backend.Base;
+namespace AdvancedSystems.Backend.Configuration;
 
 public static class IServiceCollectionExtensions
 {
@@ -36,12 +37,21 @@ public static class IServiceCollectionExtensions
 
     public static IServiceCollection AddCustomSwaggerGen(this IServiceCollection services, OpenApiInfo openApiInfo)
     {
-        return services.AddSwaggerGen(gen => {
-            gen.SwaggerDoc(openApiInfo.Version, openApiInfo);
+        return services.AddSwaggerGen(options => {
+            var provider = services.BuildServiceProvider();
+            var service = provider.GetRequiredService<IApiVersionDescriptionProvider>();
+
+            foreach (var description in service.ApiVersionDescriptions)
+            {
+                options.SwaggerDoc(description.GroupName, new OpenApiInfo{
+                    Title = openApiInfo.Title,
+                    Version = description.ApiVersion.ToString(),
+                });
+            }
 
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-            gen.IncludeXmlComments(xmlPath);
+            options.IncludeXmlComments(xmlPath);
         });
     }
 }
