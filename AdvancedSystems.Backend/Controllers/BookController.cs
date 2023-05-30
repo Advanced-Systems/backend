@@ -11,6 +11,7 @@ namespace AdvancedSystems.Backend.Controllers;
 
 [ApiController]
 [ApiVersion("1")]
+[Produces("application/json")]
 [Route("api/[controller]")]
 public class BookController : BaseController
 {
@@ -41,6 +42,7 @@ public class BookController : BaseController
     }
 
     [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<Book> Get(int id)
     {
         var book = BookService.Get(id);
@@ -50,6 +52,8 @@ public class BookController : BaseController
     }
 
     [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult Update(int id, Book book)
     {
         if (id != book.Id) return BadRequest();
@@ -63,6 +67,7 @@ public class BookController : BaseController
     }
 
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult Delete(int id)
     {
         var book = BookService.Get(id);
