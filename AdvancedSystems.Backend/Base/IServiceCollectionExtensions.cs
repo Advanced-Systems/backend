@@ -1,8 +1,6 @@
-using Microsoft.OpenApi.Models;
-
 using Asp.Versioning;
-using Asp.Versioning.ApiExplorer;
 using NLog.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 
 namespace AdvancedSystems.Backend.Base;
 
@@ -20,16 +18,15 @@ public static class IServiceCollectionExtensions
     public static IServiceCollection AddCustomApiVersioning(this IServiceCollection services, int defaultApiVersion)
     {
         var versioningBuilder = services.AddApiVersioning(options => {
-            options.DefaultApiVersion = new ApiVersion(defaultApiVersion);
             options.ReportApiVersions = true;
+            options.DefaultApiVersion = new ApiVersion(defaultApiVersion);
             options.AssumeDefaultVersionWhenUnspecified = true;
-            options.ApiVersionReader = new HeaderApiVersionReader("api-version");
+            options.ApiVersionReader = new HeaderApiVersionReader("x-api-version");
         });
 
-        versioningBuilder.AddApiExplorer(option => {
-            option.GroupNameFormat = "'v'VVV";
-            option.FormatGroupName = (group, version) => $"{group} ({version})";
-            // option.SubstituteApiVersionInUrl = true;
+        versioningBuilder.AddApiExplorer(options => {
+            options.GroupNameFormat = "'v'VVV";
+            options.FormatGroupName = (group, version) => $"{group} ({version})";
         });
 
         return versioningBuilder.Services;

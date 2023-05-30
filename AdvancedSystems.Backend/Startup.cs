@@ -1,12 +1,12 @@
 using AdvancedSystems.Backend.Base;
+using AdvancedSystems.Backend.Configuration;
 using AdvancedSystems.Backend.Configuration.Settings;
-
-using Microsoft.OpenApi.Models;
 
 using Asp.Versioning;
 using Asp.Versioning.Conventions;
 using NLog;
 using NLog.Web;
+using Microsoft.OpenApi.Models;
 
 using ILogger = NLog.Logger;
 
@@ -50,9 +50,6 @@ public class Startup
         Logger.Trace("Add health checks");
         services.AddHealthChecks();
 
-        Logger.Trace("Add API versioning");
-        services.AddCustomApiVersioning(AppSettings.DefaultApiVersion);
-
         Logger.Trace("Initialize settings");
         services.AddOptions();
         services.Configure<AppSettings>(this.Configuration.GetSection(nameof(AppSettings)));
@@ -60,8 +57,8 @@ public class Startup
         Logger.Trace("Add controllers");
         services.AddControllers();
 
-        Logger.Trace("Add API explorer endpoint");
-        services.AddEndpointsApiExplorer();
+        Logger.Trace("Add API versioning");
+        services.AddCustomApiVersioning(AppSettings.DefaultApiVersion);
 
         Logger.Trace("Add swagger service generation");
         services.AddCustomSwaggerGen(new OpenApiInfo {
@@ -86,7 +83,8 @@ public class Startup
             app.UseSwaggerUI(options =>
             {
                 string url = $"swagger/{DefaultApiVersion}/swagger.json";
-                options.SwaggerEndpoint(url, DefaultApiVersion);
+                string name = DefaultApiVersion;
+                options.SwaggerEndpoint(url, name);
                 options.RoutePrefix = string.Empty;
             });
 
