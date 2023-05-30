@@ -1,3 +1,5 @@
+using System.Reflection;
+
 using Asp.Versioning;
 using NLog.Extensions.Logging;
 using Microsoft.OpenApi.Models;
@@ -36,6 +38,10 @@ public static class IServiceCollectionExtensions
     {
         return services.AddSwaggerGen(gen => {
             gen.SwaggerDoc(openApiInfo.Version, openApiInfo);
+
+            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            gen.IncludeXmlComments(xmlPath);
         });
     }
 }
