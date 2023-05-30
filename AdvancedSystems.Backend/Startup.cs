@@ -37,7 +37,8 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         Logger.Debug("Start service configuration");
-        services.Configure<RouteOptions>(options => {
+        services.Configure<RouteOptions>(options =>
+        {
             options.LowercaseUrls = true;
         });
 
@@ -58,7 +59,8 @@ public class Startup
         services.AddCustomApiVersioning(AppSettings.DefaultApiVersion);
 
         Logger.Trace("Add swagger service generation");
-        services.AddCustomSwaggerGen(new OpenApiInfo {
+        services.AddCustomSwaggerGen(new OpenApiInfo
+        {
             Title = SwaggerSettings.Title,
             Version = DefaultApiVersion,
             Contact = SwaggerSettings.Contact,

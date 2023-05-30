@@ -20,14 +20,16 @@ public static class IServiceCollectionExtensions
 
     public static IServiceCollection AddCustomApiVersioning(this IServiceCollection services, int defaultApiVersion)
     {
-        var versioningBuilder = services.AddApiVersioning(options => {
+        var versioningBuilder = services.AddApiVersioning(options =>
+        {
             options.ReportApiVersions = true;
             options.DefaultApiVersion = new ApiVersion(defaultApiVersion);
             options.AssumeDefaultVersionWhenUnspecified = true;
             options.ApiVersionReader = new HeaderApiVersionReader("x-api-version");
         });
 
-        versioningBuilder.AddApiExplorer(options => {
+        versioningBuilder.AddApiExplorer(options =>
+        {
             options.GroupNameFormat = "'v'VVV";
             options.FormatGroupName = (group, version) => $"{group} ({version})";
         });
@@ -37,13 +39,15 @@ public static class IServiceCollectionExtensions
 
     public static IServiceCollection AddCustomSwaggerGen(this IServiceCollection services, OpenApiInfo openApiInfo)
     {
-        return services.AddSwaggerGen(options => {
+        return services.AddSwaggerGen(options =>
+        {
             var provider = services.BuildServiceProvider();
             var service = provider.GetRequiredService<IApiVersionDescriptionProvider>();
 
             foreach (var description in service.ApiVersionDescriptions)
             {
-                options.SwaggerDoc(description.GroupName, new OpenApiInfo{
+                options.SwaggerDoc(description.GroupName, new OpenApiInfo
+                {
                     Title = openApiInfo.Title,
                     Version = description.ApiVersion.ToString(),
                 });
