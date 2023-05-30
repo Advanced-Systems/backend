@@ -1,7 +1,29 @@
-# ASP.NET Core build artificats
+# ASP.NET Core Build Artificats
 [Bb]in/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+[Bb]uild/
+bld/
+x64/
+x86/
+msbuild.log
+msbuild.err
+msbuild.wrn
 
-.vscode/*
+# Development Environments
+.vscode/
+.vs/
+.idea/
+
+# Cache
+*.swp
+*.*~
+project.lock.json
+.DS_Store
+*.pyc
+nupkg/
