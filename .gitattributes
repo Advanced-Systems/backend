@@ -1,0 +1,11 @@
+* text=auto
+
+# dotnet
+*.cs        eol=crlf
+*.csproj    eol=crlf
+*.ps1       eol=crlf
+
+# configuration
+*.config
+*.json
+*.xml
