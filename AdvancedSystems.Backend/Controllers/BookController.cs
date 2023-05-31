@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using AdvancedSystems.Backend.Base;
-using AdvancedSystems.Backend.Models;
 using AdvancedSystems.Backend.Configuration.Settings;
-using AdvancedSystems.Backend.Service;
+using AdvancedSystems.Backend.Models;
+using AdvancedSystems.Backend.Models.Interfaces;
 
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
@@ -21,10 +22,13 @@ namespace AdvancedSystems.Backend.Controllers;
 [Route("api/[controller]")]
 public class BookController : BaseController
 {
-    public BookController(ILogger<BookController> logger, IOptions<AppSettings> configuration) : base(logger)
+    private readonly IBookService _bookService;
+
+    public BookController(ILogger<BookController> logger, IOptions<AppSettings> configuration, IBookService bookService) : base(logger)
     {
         ArgumentNullException.ThrowIfNull(configuration);
 
+        _bookService = bookService;
         AppSettings = configuration.Value;
     }
 
@@ -33,56 +37,56 @@ public class BookController : BaseController
     #region CRUD
 
     [HttpPost]
-    public IActionResult Create(Book book)
+    public async Task<IActionResult> Create(Book book)
     {
-        BookService.Add(book);
+        await _bookService.Add(book);
         Logger.LogDebug($"Create book '{book.Title}'");
         return CreatedAtAction(nameof(Get), new { Id = book.Id }, book);
     }
 
     [HttpGet]
     [ApiVersion("2")]
-    public ActionResult<List<Book>> GetAll()
+    public async Task<ActionResult<List<Book>>> GetAll()
     {
         Logger.LogDebug("Get all books");
-        return BookService.GetAll();
+        return Ok(await _bookService.GetAllAsync());
     }
 
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<Book> Get(int id)
+    public async Task<ActionResult<Book>> Get(int id)
     {
-        var book = BookService.Get(id);
+        var book = await _bookService.GetById(id);
         if (book is null) return NotFound();
         Logger.LogDebug($"Get book '{book.Title}'");
-        return book;
+        return Ok(book);
     }
 
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult Update(int id, Book book)
+    public async Task<IActionResult> Update(int id, Book book)
     {
         if (id != book.Id) return BadRequest();
 
-        var oldBook = BookService.Get(id);
+        var oldBook = await  _bookService.GetById(id);
         if (oldBook is null) return NotFound();
 
         Logger.LogDebug($"Update book '{book.Title}'");
-        BookService.Update(id, book);
+        await _bookService.Update(id, book);
         return NoContent();
     }
 
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        var book = BookService.Get(id);
+        var book = await _bookService.GetById(id);
 
         if (book is null) return NotFound();
 
         Logger.LogDebug($"Delete book '{book.Title}'");
-        BookService.Delete(id);
+        await _bookService.Delete(id);
         return NoContent();
     }
 

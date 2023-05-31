@@ -1,49 +1,54 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 using AdvancedSystems.Backend.Models;
+using AdvancedSystems.Backend.Models.Interfaces;
 
 namespace AdvancedSystems.Backend.Service;
 
-public static class BookService
+public class BookService : IBookService
 {
-    private static List<Book> Books { get; set; }
-    private static int nextId;
+    private static List<Book> Books { get; set; } = new()
+    {
+        new Book{ Id = 1, Author = "John R. Taylor", Title = "Classical Mechanics" },
+        new Book{ Id = 2, Author = "H. M. Schey", Title = "div, grad, curl and all that" },
+        new Book{ Id = 3, Author = "G. Stephenson", Title = "Mathematical Methods for Science Students" },
+    };
 
     static BookService()
     {
-        Books = new List<Book>()
-        {
-            new Book{ Id = 1, Author = "John R. Taylor", Title = "Classical Mechanics" },
-            new Book{ Id = 2, Author = "H. M. Schey", Title = "div, grad, curl and all that" },
-            new Book{ Id = 3, Author = "G. Stephenson", Title = "Mathematical Methods for Science Students" },
-        };
 
-        nextId = Books.Count;
     }
 
     #region CRUD
 
-    public static void Add(Book book)
+    public async Task Add(Book book)
     {
-        book.Id = nextId++;
-        Books.Add(book);
+        book.Id = Books.Count + 1;
+        await Task.Run(() => Books.Add(book));
     }
 
-    public static List<Book> GetAll() => Books;
-
-    public static Book? Get(int id) => Books.FirstOrDefault(b => b.Id == id);
-
-    public static void Update(int id, Book book)
+    public async Task<IEnumerable<Book>> GetAllAsync()
     {
-        int index = Books.FindIndex(b => b.Id == id);
+        return await Task.Run(() => Books);
+    }
+
+    public async Task<Book?> GetById(int id)
+    {
+        return await Task.Run(() => Books.FirstOrDefault(b => b.Id == id));
+    }
+
+    public async Task Update(int id, Book book)
+    {
+        int index = await Task.Run(() => Books.FindIndex(b => b.Id == id));
         if (index == -1) return;
         Books[index] = book;
     }
 
-    public static void Delete(int id)
+    public async Task Delete(int id)
     {
-        var book = Get(id);
+        var book = await GetById(id);
         if (book is null) return;
         Books.Remove(book);
     }

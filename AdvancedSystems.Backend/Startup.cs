@@ -1,5 +1,7 @@
 using AdvancedSystems.Backend.Configuration;
 using AdvancedSystems.Backend.Configuration.Settings;
+using AdvancedSystems.Backend.Models.Interfaces;
+using AdvancedSystems.Backend.Service;
 
 using NLog;
 using NLog.Web;
@@ -7,8 +9,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
 using ILogger = NLog.Logger;
@@ -47,6 +49,9 @@ public class Startup
         {
             options.LowercaseUrls = true;
         });
+
+        Logger.Trace("Add custom services");
+        services.AddScoped<IBookService, BookService>();
 
         Logger.Trace("Add logging service");
         services.AddCustomLogging();
