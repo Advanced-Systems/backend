@@ -1,9 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
+    <Authors>Stefan Greve</Authors>
+    <Company>Advanced Systems</Company>
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ChecksumAlgorithm>SHA256</ChecksumAlgorithm>
   </PropertyGroup>
 
   <ItemGroup>
