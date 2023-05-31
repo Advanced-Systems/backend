@@ -42,6 +42,8 @@ Or connect to the web API with `httprepl`:
 httprepl https://localhost:5001
 ```
 
-## Further Reading
+Run the test suite:
 
-- [Test web APIs with the HttpRepl](https://learn.microsoft.com/en-us/aspnet/core/web-api/http-repl/?view=aspnetcore-7.0&tabs=windows)
+```powershell
+dotnet test .\AdvancedSystems.Backend.Tests\
+```
