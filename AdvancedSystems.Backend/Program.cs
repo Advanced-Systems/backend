@@ -1,7 +1,13 @@
+using System;
+using System.IO;
+
 using AdvancedSystems.Backend.Configuration;
 
 using NLog;
 using NLog.Web;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 using ILogger = NLog.Logger;
 

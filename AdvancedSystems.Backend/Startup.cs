@@ -3,6 +3,12 @@ using AdvancedSystems.Backend.Configuration.Settings;
 
 using NLog;
 using NLog.Web;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
 using ILogger = NLog.Logger;

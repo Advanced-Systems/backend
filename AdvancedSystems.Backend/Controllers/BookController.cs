@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 using AdvancedSystems.Backend.Base;
 using AdvancedSystems.Backend.Models;
 using AdvancedSystems.Backend.Configuration.Settings;
@@ -6,6 +9,8 @@ using AdvancedSystems.Backend.Service;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
 
 namespace AdvancedSystems.Backend.Controllers;
 
@@ -18,7 +23,7 @@ public class BookController : BaseController
 {
     public BookController(ILogger<BookController> logger, IOptions<AppSettings> configuration) : base(logger)
     {
-        if (configuration is null) throw new ArgumentNullException(nameof(configuration));
+        ArgumentNullException.ThrowIfNull(configuration);
 
         AppSettings = configuration.Value;
     }
