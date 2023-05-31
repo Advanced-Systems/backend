@@ -9,7 +9,7 @@ public interface IBookService
 
     Task<IEnumerable<Book>> GetAllAsync();
 
-    Task<Book?> GetById(int id);
+    Task<Book?> GetByIdAsync(int id);
 
     Task Update(int id, Book book);
 

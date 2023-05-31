@@ -59,7 +59,7 @@ public class BookController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Book>> Get(int id)
     {
-        var book = await _bookService.GetById(id);
+        var book = await _bookService.GetByIdAsync(id);
         if (book is null) return NotFound();
         return Ok(book);
     }
@@ -71,7 +71,7 @@ public class BookController : ControllerBase
     {
         if (id != book.Id) return BadRequest();
 
-        var oldBook = await  _bookService.GetById(id);
+        var oldBook = await  _bookService.GetByIdAsync(id);
         if (oldBook is null) return NotFound();
 
         await _bookService.Update(id, book);
@@ -82,7 +82,7 @@ public class BookController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(int id)
     {
-        var book = await _bookService.GetById(id);
+        var book = await _bookService.GetByIdAsync(id);
 
         if (book is null) return NotFound();
 

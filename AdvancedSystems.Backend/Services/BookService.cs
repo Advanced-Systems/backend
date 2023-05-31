@@ -38,7 +38,7 @@ public class BookService : IBookService
         return await Task.Run(() => Books);
     }
 
-    public async Task<Book?> GetById(int id)
+    public async Task<Book?> GetByIdAsync(int id)
     {
         var book = await Task.Run(() => Books.FirstOrDefault(b => b.Id == id));
         _loggingService.LogDebug("Get book: {}", book?.Title ?? "n/a");
@@ -55,7 +55,7 @@ public class BookService : IBookService
 
     public async Task Delete(int id)
     {
-        var book = await GetById(id);
+        var book = await GetByIdAsync(id);
         if (book is null) return;
         _loggingService.LogDebug("Deleted book: {}", book.Title!);
         Books.Remove(book);
