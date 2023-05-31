@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using AdvancedSystems.Backend.Base;
 using AdvancedSystems.Backend.Configuration.Settings;
 using AdvancedSystems.Backend.Models;
 using AdvancedSystems.Backend.Models.Interfaces;
@@ -10,8 +9,8 @@ using AdvancedSystems.Backend.Models.Interfaces;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace AdvancedSystems.Backend.Controllers;
 
@@ -20,19 +19,24 @@ namespace AdvancedSystems.Backend.Controllers;
 [ApiExplorerSettings(GroupName = "Library")]
 [Produces("application/json")]
 [Route("api/[controller]")]
-public class BookController : BaseController
+public class BookController : ControllerBase
 {
-    private readonly IBookService _bookService;
-
-    public BookController(ILogger<BookController> logger, IOptions<AppSettings> configuration, IBookService bookService) : base(logger)
+    public BookController(IBookService bookService, IOptions<AppSettings> appSettings, ILogger<BookController> logger)
     {
-        ArgumentNullException.ThrowIfNull(configuration);
+        ArgumentNullException.ThrowIfNull(appSettings);
 
         _bookService = bookService;
-        AppSettings = configuration.Value;
+        _appSettings = appSettings.Value;
+        _logger = logger;
+
+        _logger.LogInformation("Announce BookService!");
     }
 
-    private AppSettings AppSettings { get; }
+    private readonly IBookService _bookService;
+
+    private readonly ILogger<BookController> _logger;
+
+    private readonly AppSettings _appSettings;
 
     #region CRUD
 
@@ -40,15 +44,14 @@ public class BookController : BaseController
     public async Task<IActionResult> Create(Book book)
     {
         await _bookService.Add(book);
-        Logger.LogDebug($"Create book '{book.Title}'");
         return CreatedAtAction(nameof(Get), new { Id = book.Id }, book);
     }
 
     [HttpGet]
+    [ApiVersion("1")]
     [ApiVersion("2")]
     public async Task<ActionResult<List<Book>>> GetAll()
     {
-        Logger.LogDebug("Get all books");
         return Ok(await _bookService.GetAllAsync());
     }
 
@@ -58,7 +61,6 @@ public class BookController : BaseController
     {
         var book = await _bookService.GetById(id);
         if (book is null) return NotFound();
-        Logger.LogDebug($"Get book '{book.Title}'");
         return Ok(book);
     }
 
@@ -72,7 +74,6 @@ public class BookController : BaseController
         var oldBook = await  _bookService.GetById(id);
         if (oldBook is null) return NotFound();
 
-        Logger.LogDebug($"Update book '{book.Title}'");
         await _bookService.Update(id, book);
         return NoContent();
     }
@@ -85,7 +86,6 @@ public class BookController : BaseController
 
         if (book is null) return NotFound();
 
-        Logger.LogDebug($"Delete book '{book.Title}'");
         await _bookService.Delete(id);
         return NoContent();
     }

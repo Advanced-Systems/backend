@@ -51,7 +51,8 @@ public class Startup
         });
 
         Logger.Trace("Add custom services");
-        services.AddScoped<IBookService, BookService>();
+        services.AddSingleton<ILoggingService, LoggingService>();
+        services.AddSingleton<IBookService, BookService>();
 
         Logger.Trace("Add logging service");
         services.AddCustomLogging();
