@@ -1,0 +1,34 @@
+name: ASP.NET Core CI
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+    paths-ignore:
+      - "readme.md"
+      - "scripts/**"
+
+jobs:
+  tests:
+    runs-on: ${{ matrix.os }}
+    name: "Unit Tests for ${{ matrix.os }}"
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest ]
+    steps:
+      - uses: actions/checkout@v3
+      - name: "Setup .NET Core SDK 7.0"
+        uses: actions/setup-dotnet@v3
+        with:
+          global-json-file: global.json
+      - name: "Install Dependencies"
+        run: dotnet restore --configfile AdvancedSystems.Backend/nuget.config --verbosity minimal
+      - name: "Build Project"
+        run: dotnet build AdvancedSystems.Backend --configuration Release --no-restore --nologo
+      - name: "Run Unit Tests"
+        run: dotnet test AdvancedSystems.Backend.Tests --no-restore --verbosity normal
+ 
