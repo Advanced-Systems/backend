@@ -26,7 +26,7 @@ jobs:
         with:
           global-json-file: global.json
       - name: "Install Dependencies"
-        run: dotnet restore --configfile AdvancedSystems.Backend/nuget.config --verbosity minimal
+        run: dotnet restore AdvancedSystems.Backend --configfile AdvancedSystems.Backend/nuget.config --verbosity minimal
       - name: "Build Project"
         run: dotnet build AdvancedSystems.Backend --configuration Release --no-restore --nologo
       - name: "Run Unit Tests"
