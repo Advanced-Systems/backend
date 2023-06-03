@@ -12,17 +12,21 @@ TODO
 
 ## Developer Notes
 
+### Prerequisites
+
 Project requirements:
 
 ```powershell
 winget install microsoft.dotnet.sdk.7
 ```
 
-Install and build the project:
+Install and build the project on a developer machine:
 
 ```powershell
 .\scripts\install.ps1 -Environment Development
 ```
+
+### Commands
 
 Launch the backend:
 
@@ -36,14 +40,20 @@ Open swagger:
 start https://localhost:5001/
 ```
 
-Or connect to the web API with `httprepl`:
-
-```powershell
-httprepl https://localhost:5001
-```
-
 Run the test suite:
 
 ```powershell
 dotnet test .\AdvancedSystems.Backend.Tests\
+```
+
+Containerize the development environment:
+
+```powershell
+docker build --rm -t adv-sys/backend:latest . --build-arg PORT=5000
+```
+
+Run the container and expose port 5000 over HTTP:
+
+```powershell
+docker run --rm -p 5000:5000 adv-sys/backend
 ```
