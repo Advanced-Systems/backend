@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Authors>Stefan Greve</Authors>
     <Company>Advanced Systems</Company>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <IsPackable>false</IsPackable>

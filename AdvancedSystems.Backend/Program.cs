@@ -1,59 +1,57 @@
 using System;
 using System.IO;
 
-using AdvancedSystems.Backend.Configuration;
-
 using NLog;
-using NLog.Web;
-using Microsoft.AspNetCore.Hosting;
+using NLog.Extensions.Logging;
+
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting.Internal;
 
-using ILogger = NLog.Logger;
-
-namespace AdvancedSystems.Backend;
-
-public class Program
+namespace AdvancedSystems.Backend
 {
-    private static readonly ILogger Logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
-
-    public static void Main(string[] args)
+    public static class Program
     {
-        try
+        public static void Main(string[] args)
         {
-            Logger.Trace("Read configuration file");
-            IConfigurationRoot configurationRoot = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddCustomJsonFile("appsettings.json", true, true)
-                .Build();
+            Logger logger = LogManager.GetCurrentClassLogger();
 
-            var host = CreateHostBuilder(args, configurationRoot);
-
-            Logger.Info("Starting Backend");
-            var builder = host.Build();
-
-            builder.Run();
-        }
-        catch (Exception exception)
-        {
-            Logger.Error(exception, "The application was forced to shut down because an unknown error occurred");
-            throw;
-        }
-        finally
-        {
-            Logger.Info("Shutting down...");
-            LogManager.Shutdown();
-        }
-    }
-
-    private static IHostBuilder CreateHostBuilder(string[] args, IConfigurationRoot configurationRoot)
-    {
-        return Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(builder =>
+            var environment = new HostingEnvironment
             {
-                builder
-                    .UseConfiguration(configurationRoot)
-                    .UseStartup<Startup>();
-            });
+                ApplicationName = "AdvancedSystems.Backend",
+                ContentRootPath = Directory.GetCurrentDirectory(),
+                EnvironmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development"
+            };
+
+            try
+            {
+                var appBuilder = WebApplication.CreateBuilder(args);
+
+                var configurationRoot = new ConfigurationBuilder()
+                                        .ConfigureBackendBuilder(environment)
+                                        .Build();
+
+                appBuilder.Configuration.AddConfiguration(configurationRoot);
+                appBuilder.Services.ConfigureBackendServices(environment, appBuilder.Configuration);
+
+                LogManager.Configuration = new NLogLoggingConfiguration(appBuilder.Configuration.GetRequiredSection(nameof(NLog)));
+                
+                logger.Debug("Starting Backend");
+                logger.Debug("Configured Environment: {}", environment.EnvironmentName);
+
+                var backend = appBuilder.Build();
+                backend.Configure(environment);
+                backend.Run();
+            }
+            catch (Exception exception)
+            {
+                logger.Error(exception);
+            }
+            finally
+            {
+                LogManager.Shutdown();
+                Environment.Exit(0);
+            }
+        }
     }
 }

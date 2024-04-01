@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Authors>Stefan Greve</Authors>
     <Company>Advanced Systems</Company>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -36,6 +36,11 @@
     <Content Update="appsettings.json" CopyToPublishDirectory="Always">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\Requests\" />
+    <Folder Include="Models\Responses\" />
   </ItemGroup>
 
 </Project>

@@ -1,95 +1,62 @@
-using AdvancedSystems.Backend.Configuration;
 using AdvancedSystems.Backend.Configuration.Settings;
-using AdvancedSystems.Backend.Models.Interfaces;
-using AdvancedSystems.Backend.Service;
+using AdvancedSystems.Backend.Interfaces;
+using AdvancedSystems.Backend.Services;
 
-using NLog;
-using NLog.Web;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Logging;
 
-using ILogger = NLog.Logger;
+using NLog.Extensions.Logging;
 
-namespace AdvancedSystems.Backend;
-
-public class Startup
+namespace AdvancedSystems.Backend
 {
-    public Startup(IConfiguration configuration)
+    public static class Startup
+{
+    public static IConfigurationBuilder ConfigureBackendBuilder(this IConfigurationBuilder builder, IHostEnvironment environment)
     {
-        Configuration = configuration;
-
-        SwaggerSettings = new SwaggerSettings();
-        Configuration.GetSection(nameof(SwaggerSettings)).Bind(SwaggerSettings);
-
-        AppSettings = new AppSettings();
-        Configuration.GetSection(nameof(AppSettings)).Bind(AppSettings);
-
-        DefaultApiVersion = $"v{AppSettings.DefaultApiVersion}";
+        return builder.SetBasePath(environment.ContentRootPath)
+                      .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                      .AddJsonFile($"appsettings.{environment.EnvironmentName}.json",
+                                   optional: true,
+                                   reloadOnChange: true)
+                      .AddEnvironmentVariables();
     }
 
-    public IConfiguration Configuration { get; }
-
-    public SwaggerSettings SwaggerSettings { get; }
-
-    public AppSettings AppSettings { get; }
-
-    private string DefaultApiVersion { get; }
-
-    private static readonly ILogger Logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
-
-    public void ConfigureServices(IServiceCollection services)
+    public static IServiceCollection ConfigureBackendServices(this IServiceCollection services,
+        IHostEnvironment environment,
+        IConfigurationRoot configurationRoot)
     {
-        Logger.Debug("Start service configuration");
+        services.AddSingleton(environment);
+
+        services.AddOptions<AppSettings>()
+                .Bind(configurationRoot.GetRequiredSection(nameof(AppSettings)))
+                .ValidateOnStart();
+
+        services.AddLogging(logBuilder =>
+        {
+            logBuilder.ClearProviders();
+            logBuilder.AddNLog();
+        });
+
         services.Configure<RouteOptions>(options =>
         {
             options.LowercaseUrls = true;
         });
 
-        Logger.Trace("Add custom services");
-        services.AddSingleton<ILoggingService, LoggingService>();
-        services.AddSingleton<IBookService, BookService>();
-
-        Logger.Trace("Add logging service");
-        services.AddCustomLogging();
-
-        Logger.Trace("Add health checks");
-        services.AddHealthChecks();
-
-        Logger.Trace("Initialize settings");
-        services.AddOptions();
-        services.Configure<AppSettings>(this.Configuration.GetSection(nameof(AppSettings)));
-
-        Logger.Trace("Add controllers");
         services.AddControllers();
 
-        Logger.Trace("Add API versioning");
-        services.AddCustomApiVersioning(AppSettings.DefaultApiVersion);
-
-        Logger.Trace("Add swagger service generation");
-        services.AddCustomSwaggerGen(new OpenApiInfo
-        {
-            Title = SwaggerSettings.Title,
-            Version = DefaultApiVersion,
-            Contact = SwaggerSettings.Contact,
-            License = SwaggerSettings.License
-        });
+        services.AddSingleton<IBookService, BookService>();
+        
+        return services;
     }
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    public static void Configure(this WebApplication app, IHostEnvironment environment)
     {
-        Logger.Debug("Start builder configuration");
-
-        if (env.IsDevelopment())
+        if (environment.IsDevelopment())
         {
-            Logger.Trace("Turn on swagger");
-            app.UseCustomSwagger();
-            app.UseCustomSwaggerUI();
-
             app.UseDeveloperExceptionPage();
         }
         else
@@ -97,22 +64,16 @@ public class Startup
             app.UseHsts();
         }
 
-        Logger.Trace("Add health check");
-        app.UseHealthChecks("/health");
-
-        Logger.Trace("Enable HTTPS");
         app.UseHttpsRedirection();
-
-        Logger.Trace("Enable static file serving");
         app.UseStaticFiles();
-
-        Logger.Trace("Configure routing");
+        
         app.UseRouting();
-
-        Logger.Trace("Configure authorization");
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+        });
+        
         app.UseAuthorization();
-
-        Logger.Trace("Configure endpoints");
-        app.UseCustomEndpoints(AppSettings.DefaultApiVersion);
     }
+}
 }

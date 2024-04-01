@@ -1,15 +1,11 @@
-using System.ComponentModel.DataAnnotations;
-
-namespace AdvancedSystems.Backend.Models;
-
-public class Book
+namespace AdvancedSystems.Backend.Models
 {
-    [Required]
-    public int Id { set; get; }
+    public record Book
+    {
+        public required int Id { get; set; }
 
-    [Required]
-    public string? Author { get; set; }
+        public required string Author { get; set; }
 
-    [Required]
-    public string? Title { get; set; }
+        public required string Title { get; set; }
+    }
 }

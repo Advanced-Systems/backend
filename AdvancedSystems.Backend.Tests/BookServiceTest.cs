@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 
-using AdvancedSystems.Backend.Service;
-using AdvancedSystems.Backend.Models.Interfaces;
+using AdvancedSystems.Backend.Services;
+using AdvancedSystems.Backend.Interfaces;
 
 using Moq;
 using Xunit;
@@ -10,14 +10,12 @@ namespace AdvancedSystems.Backend.Tests;
 
 public class BookServiceTests
 {
-    public BookServiceTests()
-    {
-        _serviceUnderTest = new BookService(_mockLogger.Object);
-    }
-
     private readonly BookService _serviceUnderTest;
 
-    private readonly Mock<ILoggingService> _mockLogger = new Mock<ILoggingService>();
+    public BookServiceTests()
+    {
+        _serviceUnderTest = new BookService();
+    }
 
     #region Unit Tests
 

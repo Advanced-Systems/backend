@@ -17,7 +17,7 @@ TODO
 Project requirements:
 
 ```powershell
-winget install microsoft.dotnet.sdk.7
+winget install microsoft.dotnet.sdk.8
 ```
 
 Install and build the project on a developer machine:
@@ -43,7 +43,7 @@ start https://localhost:5001/
 Run the test suite:
 
 ```powershell
-dotnet test .\AdvancedSystems.Backend.Tests\
+dotnet test AdvancedSystems.Backend.Tests
 ```
 
 Containerize the development environment:
