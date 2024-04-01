@@ -49,7 +49,7 @@ namespace AdvancedSystems.Backend
         services.AddControllers();
 
         services.AddSingleton<IBookService, BookService>();
-        
+
         return services;
     }
 
@@ -66,13 +66,13 @@ namespace AdvancedSystems.Backend
 
         app.UseHttpsRedirection();
         app.UseStaticFiles();
-        
+
         app.UseRouting();
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
         });
-        
+
         app.UseAuthorization();
     }
 }

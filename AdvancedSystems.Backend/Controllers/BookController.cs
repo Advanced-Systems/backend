@@ -16,24 +16,13 @@ namespace AdvancedSystems.Backend.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
-    public class BookController : ControllerBase
+    public class BookController(IBookService bookService, IOptions<AppSettings> appSettings, ILogger<BookController> logger) : ControllerBase
     {
-        private readonly IBookService _bookService;
+        private readonly IBookService _bookService = bookService;
 
-        private readonly ILogger<BookController> _logger;
+        private readonly AppSettings _appSettings = appSettings.Value;
 
-        private readonly AppSettings _appSettings;
-
-        public BookController(IBookService bookService,
-            IOptions<AppSettings> appSettings,
-            ILogger<BookController> logger)
-        {
-            _bookService = bookService;
-            _appSettings = appSettings.Value;
-            _logger = logger;
-
-            _logger.LogInformation("Announce BookService!");
-        }
+        private readonly ILogger<BookController> _logger = logger;
 
         #region CRUD
 
