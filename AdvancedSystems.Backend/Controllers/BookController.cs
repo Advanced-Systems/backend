@@ -11,10 +11,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using System.Net.Mime;
 
 namespace AdvancedSystems.Backend.Controllers
 {
-    [Produces("application/json")]
+    [ApiController]
+    [ApiVersion(1.0)]
+    [Produces(MediaTypeNames.Application.Json)]
     [Route("api/[controller]")]
     public class BookController(IBookService bookService, IOptions<AppSettings> appSettings, ILogger<BookController> logger) : ControllerBase
     {
@@ -35,8 +38,8 @@ namespace AdvancedSystems.Backend.Controllers
         }
 
         [HttpGet]
-        [ApiVersion("1")]
-        [ApiVersion("2")]
+        [ApiVersion(1.0)]
+        [ApiVersion(2.0)]
         public async Task<ActionResult<List<Book>>> GetAll()
         {
             this._logger.LogDebug("Retrieve all books");

@@ -3,6 +3,8 @@ using AdvancedSystems.Backend.Core.Extensions;
 using AdvancedSystems.Backend.Interfaces;
 using AdvancedSystems.Backend.Services;
 
+using Asp.Versioning.ApiExplorer;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
@@ -53,6 +55,7 @@ namespace AdvancedSystems.Backend
             services.AddControllers();
 
             services.AddBackendHealthChecks();
+            services.AddBackendDocumentation();
 
             services.AddSingleton<IBookService, BookService>();
 
@@ -64,6 +67,13 @@ namespace AdvancedSystems.Backend
             if (environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(option => {
+                    foreach (ApiVersionDescription description in app.DescribeApiVersions())
+                    {
+                        option.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName);
+                    }
+                });
             }
             else
             {
