@@ -2,7 +2,6 @@ using AdvancedSystems.Backend.Configuration.Settings;
 using AdvancedSystems.Backend.Core.Extensions;
 using AdvancedSystems.Backend.Interfaces;
 using AdvancedSystems.Backend.Services;
-using AdvancedSystems.Backend.Services.HealthChecks;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
@@ -59,20 +58,6 @@ namespace AdvancedSystems.Backend
 
             return services;
         }
-
-        #region Custom Service Registration
-
-        public static IServiceCollection AddBackendHealthChecks(this IServiceCollection services)
-        {
-            services.AddSingleton<IConnectionHealthCheck, ConnectionHealthCheck>();
-
-            services.AddHealthChecks()
-                .AddCheck<ConnectionHealthCheck>(nameof(ConnectionHealthCheck));
-
-            return services;
-        }
-
-        #endregion
 
         public static void Configure(this WebApplication app, IHostEnvironment environment)
         {
