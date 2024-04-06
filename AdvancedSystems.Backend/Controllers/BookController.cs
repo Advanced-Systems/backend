@@ -11,29 +11,21 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using System.Net.Mime;
 
 namespace AdvancedSystems.Backend.Controllers
 {
-    [Produces("application/json")]
+    [ApiController]
+    [ApiVersion(1.0)]
+    [Produces(MediaTypeNames.Application.Json)]
     [Route("api/[controller]")]
-    public class BookController : ControllerBase
+    public class BookController(IBookService bookService, IOptions<AppSettings> appSettings, ILogger<BookController> logger) : ControllerBase
     {
-        private readonly IBookService _bookService;
+        private readonly IBookService _bookService = bookService;
 
-        private readonly ILogger<BookController> _logger;
+        private readonly AppSettings _appSettings = appSettings.Value;
 
-        private readonly AppSettings _appSettings;
-
-        public BookController(IBookService bookService,
-            IOptions<AppSettings> appSettings,
-            ILogger<BookController> logger)
-        {
-            _bookService = bookService;
-            _appSettings = appSettings.Value;
-            _logger = logger;
-
-            _logger.LogInformation("Announce BookService!");
-        }
+        private readonly ILogger<BookController> _logger = logger;
 
         #region CRUD
 
@@ -46,8 +38,8 @@ namespace AdvancedSystems.Backend.Controllers
         }
 
         [HttpGet]
-        [ApiVersion("1")]
-        [ApiVersion("2")]
+        [ApiVersion(1.0)]
+        [ApiVersion(2.0)]
         public async Task<ActionResult<List<Book>>> GetAll()
         {
             this._logger.LogDebug("Retrieve all books");

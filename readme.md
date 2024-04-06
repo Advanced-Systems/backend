@@ -28,16 +28,17 @@ Install and build the project on a developer machine:
 
 ### Commands
 
-Launch the backend:
+Launch the backend in Development mode:
 
 ```powershell
+setx ASPNETCORE_ENVIRONMENT "Development"
 dotnet run --project="AdvancedSystems.Backend"
 ```
 
 Open swagger:
 
 ```powershell
-start https://localhost:5001/
+start https://localhost:5001/swagger/index.html
 ```
 
 Run the test suite:

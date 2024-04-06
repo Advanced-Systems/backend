@@ -5,10 +5,14 @@ using System.Threading.Tasks;
 using AdvancedSystems.Backend.Interfaces;
 using AdvancedSystems.Backend.Models;
 
+using Microsoft.Extensions.Logging;
+
 namespace AdvancedSystems.Backend.Services
 {
-    public class BookService : IBookService
+    public class BookService(ILogger<IBookService> logger) : IBookService
     {
+        private readonly ILogger<IBookService> _logger = logger;
+
         private static List<Book> Books { get; } =
         [
             new Book { Id = 1, Author = "John R. Taylor", Title = "Classical Mechanics" },
