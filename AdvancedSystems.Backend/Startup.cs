@@ -1,4 +1,3 @@
-using AdvancedSystems.Backend.Configuration.Settings;
 using AdvancedSystems.Backend.Core.Extensions;
 using AdvancedSystems.Backend.Interfaces;
 using AdvancedSystems.Backend.Services;
@@ -31,10 +30,7 @@ namespace AdvancedSystems.Backend
         public static IServiceCollection ConfigureBackendServices(this IServiceCollection services, IHostEnvironment environment, IConfigurationRoot configurationRoot)
         {
             services.AddSingleton(environment);
-
-            services.AddOptions<AppSettings>()
-                    .Bind(configurationRoot.GetRequiredSection(nameof(AppSettings)))
-                    .ValidateOnStart();
+            services.AddBackendSettings(configurationRoot);
 
             services.AddLogging(options =>
             {
@@ -55,7 +51,7 @@ namespace AdvancedSystems.Backend
             services.AddControllers();
 
             services.AddBackendHealthChecks();
-            services.AddBackendDocumentation();
+            services.AddBackendDocumentation(configurationRoot);
 
             services.AddSingleton<IBookService, BookService>();
 
