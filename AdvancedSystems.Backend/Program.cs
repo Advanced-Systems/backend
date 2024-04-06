@@ -35,7 +35,7 @@ namespace AdvancedSystems.Backend
                 appBuilder.Services.ConfigureBackendServices(environment, appBuilder.Configuration);
 
                 LogManager.Configuration = new NLogLoggingConfiguration(appBuilder.Configuration.GetRequiredSection(nameof(NLog)));
-                
+
                 logger.Debug("Starting Backend");
                 logger.Debug("Configured Environment: {}", environment.EnvironmentName);
 

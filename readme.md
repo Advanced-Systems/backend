@@ -31,6 +31,7 @@ Install and build the project on a developer machine:
 Launch the backend:
 
 ```powershell
+setx ASPNETCORE_ENVIRONMENT "Development"
 dotnet run --project="AdvancedSystems.Backend"
 ```
 
