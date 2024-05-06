@@ -13,79 +13,81 @@ using Microsoft.Extensions.Logging;
 
 using NLog.Extensions.Logging;
 
-namespace AdvancedSystems.Backend
+namespace AdvancedSystems.Backend;
+
+public static class Startup
 {
-    public static class Startup
+    public static IConfigurationBuilder ConfigureBackendBuilder(this IConfigurationBuilder builder, IHostEnvironment environment)
     {
-        public static IConfigurationBuilder ConfigureBackendBuilder(this IConfigurationBuilder builder, IHostEnvironment environment)
+        return builder.SetBasePath(environment.ContentRootPath)
+                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                    .AddJsonFile($"appsettings.{environment.EnvironmentName}.json",
+                                optional: true,
+                                reloadOnChange: true)
+                    .AddEnvironmentVariables();
+    }
+
+    public static IServiceCollection ConfigureBackendServices(this IServiceCollection services, IHostEnvironment environment, IConfigurationRoot configurationRoot)
+    {
+        services.AddSingleton(environment);
+        services.AddBackendSettings(configurationRoot);
+
+        services.AddLogging(options =>
         {
-            return builder.SetBasePath(environment.ContentRootPath)
-                        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                        .AddJsonFile($"appsettings.{environment.EnvironmentName}.json",
-                                    optional: true,
-                                    reloadOnChange: true)
-                        .AddEnvironmentVariables();
-        }
+            options.ClearProviders();
+            options.AddNLog();
 
-        public static IServiceCollection ConfigureBackendServices(this IServiceCollection services, IHostEnvironment environment, IConfigurationRoot configurationRoot)
-        {
-            services.AddSingleton(environment);
-            services.AddBackendSettings(configurationRoot);
-
-            services.AddLogging(options =>
-            {
-                options.ClearProviders();
-                options.AddNLog();
-
-                if (environment.IsDevelopment())
-                {
-                    options.AddConsole();
-                }
-            });
-
-            services.Configure<RouteOptions>(options =>
-            {
-                options.LowercaseUrls = true;
-            });
-
-            services.AddControllers();
-
-            services.AddBackendHealthChecks();
-            services.AddBackendDocumentation(configurationRoot);
-
-            services.AddSingleton<IBookService, BookService>();
-
-            return services;
-        }
-
-        public static void Configure(this WebApplication app, IHostEnvironment environment)
-        {
             if (environment.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(option => {
-                    foreach (ApiVersionDescription description in app.DescribeApiVersions())
-                    {
-                        option.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName);
-                    }
-                });
+                options.AddConsole();
             }
-            else
-            {
-                app.UseHsts();
-            }
+        });
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
+        services.Configure<RouteOptions>(options =>
+        {
+            options.LowercaseUrls = true;
+        });
 
-            app.UseRouting();
+        services.AddControllers();
 
-            app.MapConnectionHealthCheck(app.Services.GetRequiredService<IConnectionHealthCheck>());
+        services.AddBackendHealthChecks();
+        services.AddBackendDocumentation(configurationRoot);
 
-            app.MapControllers();
+        services.AddSingleton<IBookService, BookService>();
+        services.AddProblemDetails();
 
-            app.UseAuthorization();
+        return services;
+    }
+
+    public static void Configure(this WebApplication app, IHostEnvironment environment)
+    {
+        if (environment.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
+            app.UseSwagger();
+            app.UseSwaggerUI(option => {
+                foreach (ApiVersionDescription description in app.DescribeApiVersions())
+                {
+                    option.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName);
+                }
+            });
         }
+        else
+        {
+            app.UseHsts();
+        }
+
+        app.UseHttpsRedirection();
+        app.UseStaticFiles();
+        app.UseStatusCodePages();
+        app.UseExceptionHandler();
+
+        app.UseRouting();
+
+        app.MapConnectionHealthCheck(app.Services.GetRequiredService<IConnectionHealthCheck>());
+
+        app.MapControllers();
+
+        app.UseAuthorization();
     }
 }

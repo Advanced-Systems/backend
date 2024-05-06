@@ -1,9 +1,8 @@
-namespace AdvancedSystems.Backend.Responses
-{
-    public record ConnectionHealthCheckResponse
-    {
-        public required bool IsHealthy { get; init; }
+namespace AdvancedSystems.Backend.Responses;
 
-        public required string Description { get; init; }
-    }
+public readonly record struct ConnectionHealthCheckResponse
+{
+    public required bool IsHealthy { get; init; }
+
+    public required string Description { get; init; }
 }

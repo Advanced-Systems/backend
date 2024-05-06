@@ -9,22 +9,21 @@ using Microsoft.AspNetCore.Routing;
 
 using Newtonsoft.Json;
 
-namespace AdvancedSystems.Backend.Core.Extensions
+namespace AdvancedSystems.Backend.Core.Extensions;
+
+internal static class MapMethods
 {
-    internal static class MapMethods
+    internal static IEndpointConventionBuilder MapConnectionHealthCheck(this IEndpointRouteBuilder endpoints, IConnectionHealthCheck healthCheck)
     {
-        internal static IEndpointConventionBuilder MapConnectionHealthCheck(this IEndpointRouteBuilder endpoints, IConnectionHealthCheck healthCheck)
+        return endpoints.MapHealthChecks("/healthcheck", new HealthCheckOptions
         {
-            return endpoints.MapHealthChecks("/healthcheck", new HealthCheckOptions
+            AllowCachingResponses = true,
+            ResponseWriter = async (context, report) =>
             {
-                AllowCachingResponses = true,
-                ResponseWriter = async (context, report) =>
-                {
-                    var result = await healthCheck.TestConnection();
-                    context.Response.ContentType = MediaTypeNames.Application.Json;
-                    await context.Response.WriteAsync(JsonConvert.SerializeObject(result));
-                }
-            });
-        }
+                var result = await healthCheck.TestConnection();
+                context.Response.ContentType = MediaTypeNames.Application.Json;
+                await context.Response.WriteAsync(JsonConvert.SerializeObject(result));
+            }
+        });
     }
 }
