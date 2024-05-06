@@ -31,7 +31,7 @@ internal class ExceptionHandler : IExceptionHandler
     {
         (int statusCode, string title) = MapException(exception);
 
-        var traceId = Activity.Current?.Id ?? httpContext.TraceIdentifier;
+        string traceId = Activity.Current?.Id ?? httpContext.TraceIdentifier;
         this._logger.LogError(exception, "{Title} (On machine '{MachineName}' with TraceId={TraceId})", title, Environment.MachineName, traceId);
 
         await httpContext.Response.WriteAsJsonAsync(new ProblemDetails
