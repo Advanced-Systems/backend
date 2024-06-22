@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace AdvancedSystems.Backend.Core;
 
-internal class ExceptionHandler : IExceptionHandler
+internal sealed class ExceptionHandler : IExceptionHandler
 {
     private readonly ILogger<ExceptionHandler> _logger;
 
@@ -34,14 +34,17 @@ internal class ExceptionHandler : IExceptionHandler
         string traceId = Activity.Current?.Id ?? httpContext.TraceIdentifier;
         this._logger.LogError(exception, "{Title} (On machine '{MachineName}' with TraceId={TraceId})", title, Environment.MachineName, traceId);
 
-        await httpContext.Response.WriteAsJsonAsync(new ProblemDetails
+        var problem = new ProblemDetails
         {
             Status = statusCode,
-            Type = exception.GetType().Name,
+            Type = exception.GetType()
+                            .Name,
             Title = title,
             Detail = exception.Message,
             Instance = $"{httpContext.Request.Method} {httpContext.Request.Path}",
-        }, cancellationToken: cancellationToken);
+        };
+
+        await httpContext.Response.WriteAsJsonAsync(problem, cancellationToken);
 
         return true;
     }

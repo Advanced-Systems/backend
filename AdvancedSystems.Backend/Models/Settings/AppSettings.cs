@@ -5,5 +5,5 @@ namespace AdvancedSystems.Backend.Models.Settings;
 public record AppSettings
 {
     [Required]
-    public double DefaultApiVersion { get; set; }
+    public double DefaultApiVersion { get; init; }
 }

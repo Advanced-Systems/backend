@@ -82,7 +82,6 @@ internal static class Startup
         }
 
         app.UseHttpsRedirection();
-        app.UseStaticFiles();
         app.UseStatusCodePages();
         app.UseExceptionHandler();
 

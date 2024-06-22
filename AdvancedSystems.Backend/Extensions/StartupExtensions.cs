@@ -1,5 +1,6 @@
 ﻿using System.Net.Mime;
 
+using AdvancedSystems.Backend.Core.Validators;
 using AdvancedSystems.Backend.Interfaces;
 using AdvancedSystems.Backend.Models.Settings;
 using AdvancedSystems.Backend.Services;
@@ -27,11 +28,9 @@ internal static class StartupExtensions
         services.AddOptions<AppSettings>()
                 .Bind(configuration.GetRequiredSection(nameof(AppSettings)))
                 .ValidateDataAnnotations()
-                .Validate(option =>
-                {
-                    return option.DefaultApiVersion == 1.0 || option.DefaultApiVersion == 2.0;
-                })
                 .ValidateOnStart();
+
+        services.AddSingleton<IValidateOptions<AppSettings>, AppSettingsValidator>();
 
         return services;
     }

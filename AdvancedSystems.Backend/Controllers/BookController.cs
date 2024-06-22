@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using AdvancedSystems.Backend.Interfaces;
-using AdvancedSystems.Backend.Models;
 
 using Asp.Versioning;
 
