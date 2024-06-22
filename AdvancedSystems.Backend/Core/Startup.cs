@@ -1,6 +1,7 @@
-using AdvancedSystems.Backend.Core.Extensions;
+using System.IO;
+
+using AdvancedSystems.Backend.Extensions;
 using AdvancedSystems.Backend.Interfaces;
-using AdvancedSystems.Backend.Services;
 
 using Asp.Versioning.ApiExplorer;
 
@@ -13,29 +14,34 @@ using Microsoft.Extensions.Logging;
 
 using NLog.Extensions.Logging;
 
-namespace AdvancedSystems.Backend;
+namespace AdvancedSystems.Backend.Core;
 
-public static class Startup
+internal static class Startup
 {
-    public static IConfigurationBuilder ConfigureBackendBuilder(this IConfigurationBuilder builder, IHostEnvironment environment)
+    internal static WebApplicationBuilder ConfigureBuilder(string[] args)
     {
-        return builder.SetBasePath(environment.ContentRootPath)
+        var builder = WebApplication.CreateBuilder(args);
+        
+        builder.Configuration.SetBasePath(Directory.GetCurrentDirectory())
                     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                    .AddJsonFile($"appsettings.{environment.EnvironmentName}.json",
-                                optional: true,
-                                reloadOnChange: true)
+                    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
                     .AddEnvironmentVariables();
+        
+        builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+        builder.Services.AddSingleton<IHostEnvironment>(builder.Environment);
+
+        return builder;
     }
 
-    public static IServiceCollection ConfigureBackendServices(this IServiceCollection services, IHostEnvironment environment, IConfigurationRoot configurationRoot)
+    internal static IServiceCollection ConfigureServices(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
     {
-        services.AddSingleton(environment);
-        services.AddBackendSettings(configurationRoot);
+        
+        services.AddBackendSettings(configuration);
 
         services.AddLogging(options =>
         {
             options.ClearProviders();
-            options.AddNLog();
+            options.AddNLog(new NLogLoggingConfiguration(configuration.GetRequiredSection("NLog")));
 
             if (environment.IsDevelopment())
             {
@@ -51,15 +57,13 @@ public static class Startup
         services.AddControllers();
 
         services.AddBackendHealthChecks();
-        services.AddBackendDocumentation(configurationRoot);
-
-        services.AddSingleton<IBookService, BookService>();
-        services.AddProblemDetails();
+        services.AddBackendDocumentation(configuration);
+        services.AddBackendServices();
 
         return services;
     }
 
-    public static void Configure(this WebApplication app, IHostEnvironment environment)
+    internal static void Configure(this WebApplication app, IHostEnvironment environment)
     {
         if (environment.IsDevelopment())
         {
@@ -83,8 +87,8 @@ public static class Startup
         app.UseExceptionHandler();
 
         app.UseRouting();
-
-        app.MapConnectionHealthCheck(app.Services.GetRequiredService<IConnectionHealthCheck>());
+        
+        app.MapConnectionHealthCheck<IConnectionHealthCheck>();
 
         app.MapControllers();
 

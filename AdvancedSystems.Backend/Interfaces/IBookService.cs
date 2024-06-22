@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using AdvancedSystems.Backend.Models;
+using AdvancedSystems.Backend.Models.API;
 
 namespace AdvancedSystems.Backend.Interfaces;
 

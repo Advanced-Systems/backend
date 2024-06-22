@@ -1,4 +1,4 @@
-namespace AdvancedSystems.Backend.Models;
+namespace AdvancedSystems.Backend.Models.API;
 
 public record Book
 {

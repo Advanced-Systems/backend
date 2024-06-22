@@ -6,5 +6,5 @@ namespace AdvancedSystems.Backend.Interfaces;
 
 internal interface IConnectionHealthCheck
 {
-    Task<ConnectionHealthCheckResponse> TestConnection();
+    Task<ConnectionHealthCheckResponse> GetResult();
 }
