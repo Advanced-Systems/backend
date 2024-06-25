@@ -58,7 +58,7 @@ internal static class Startup
 
         services.AddBackendHealthChecks();
         services.AddBackendDocumentation(configuration);
-        services.AddBackendServices();
+        services.AddBackendServices(environment);
 
         return services;
     }

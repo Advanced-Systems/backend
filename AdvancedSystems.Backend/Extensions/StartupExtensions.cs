@@ -1,4 +1,5 @@
-﻿using System.Net.Mime;
+﻿using System;
+using System.Net.Mime;
 
 using AdvancedSystems.Backend.Core.Validators;
 using AdvancedSystems.Backend.Interfaces;
@@ -15,6 +16,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -35,15 +37,41 @@ internal static class StartupExtensions
         return services;
     }
 
-    internal static IServiceCollection AddBackendServices(this IServiceCollection services)
+    internal static IServiceCollection AddBackendServices(this IServiceCollection services, IHostEnvironment environment)
     {
         // Required by global exception handler
         services.AddProblemDetails();
         
+        // Cusomt Services
+        services.AddCachingService(environment);
         services.AddSingleton<IBookService, BookService>();
 
         return services;
     }
+
+    #region Services
+
+    private static IServiceCollection AddCachingService(this IServiceCollection services, IHostEnvironment environment)
+    {
+        if (environment.IsDevelopment())
+        {
+            // Should only be used in single server scenarios as this cache stores items in memory and doesn't
+            // expand across multiple machines. For those scenarios it is recommended to use a proper distributed
+            // cache that can expand across multiple machines.
+            services.AddDistributedMemoryCache();
+        }
+        else
+        {
+            // See also: https://learn.microsoft.com/en-us/aspnet/core/performance/caching/distributed?view=aspnetcore-8.0#distributed-redis-cache
+            throw new NotImplementedException("TODO: Enable Redis Caching");
+        }
+
+        services.AddSingleton<ICachingService, CachingService>();
+
+        return services;
+    }
+
+    #endregion
     
     #region Health Checks
     
