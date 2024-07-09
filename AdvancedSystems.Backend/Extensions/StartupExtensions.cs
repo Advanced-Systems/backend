@@ -7,6 +7,7 @@ using AdvancedSystems.Backend.Models.Settings;
 using AdvancedSystems.Backend.Services;
 using AdvancedSystems.Backend.Services.HealthChecks;
 using AdvancedSystems.Backend.Swagger;
+using AdvancedSystems.Core.Abstractions;
 
 using Asp.Versioning;
 
@@ -44,7 +45,6 @@ internal static class StartupExtensions
         
         // Cusomt Services
         services.AddCachingService(environment);
-        services.AddSingleton<IBookService, BookService>();
 
         return services;
     }

@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
-using AdvancedSystems.Backend.Interfaces;
+using AdvancedSystems.Core.Abstractions;
 
 using Microsoft.Extensions.Caching.Distributed;
 
@@ -44,7 +44,7 @@ public sealed class CachingService : ICachingService
 
         var options = new DistributedCacheEntryOptions
         {
-            AbsoluteExpiration = value?.ExpiryDate,
+            AbsoluteExpiration = value?.AbsoluteExpiration,
         };
 
         await this._distributedCache.SetAsync(key, cacheValue, options, cancellationToken);
