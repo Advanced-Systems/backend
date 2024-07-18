@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
@@ -24,9 +25,9 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace AdvancedSystems.Backend.Extensions;
 
-internal static class StartupExtensions
+public static class ServiceCollectionExtensions
 {
-    internal static IServiceCollection AddBackendSettings(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddBackendSettings(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddOptions<AppSettings>()
                 .Bind(configuration.GetRequiredSection(nameof(AppSettings)))
@@ -38,12 +39,9 @@ internal static class StartupExtensions
         return services;
     }
 
-    internal static IServiceCollection AddBackendServices(this IServiceCollection services, IHostEnvironment environment)
+    public static IServiceCollection AddBackendServices(this IServiceCollection services, IHostEnvironment environment)
     {
-        // Required by global exception handler
-        services.AddProblemDetails();
-        
-        // Cusomt Services
+        services.AddGlobalExceptionHandler();
         services.AddCachingService(environment);
 
         return services;
@@ -51,7 +49,22 @@ internal static class StartupExtensions
 
     #region Services
 
-    private static IServiceCollection AddCachingService(this IServiceCollection services, IHostEnvironment environment)
+    public static IServiceCollection AddGlobalExceptionHandler(this IServiceCollection services)
+    {
+        services.AddExceptionHandler<GlobalExceptionHandler>();
+        services.AddProblemDetails(options =>
+        {
+            options.CustomizeProblemDetails = ctx =>
+            {
+                ctx.ProblemDetails.Extensions.Add("instance", $"{ctx.HttpContext.Request.Method} {ctx.HttpContext.Request.Path}");
+                ctx.ProblemDetails.Extensions.Remove("exception");
+            };
+        });
+
+        return services;
+    }
+
+    public static IServiceCollection AddCachingService(this IServiceCollection services, IHostEnvironment environment)
     {
         if (environment.IsDevelopment())
         {
@@ -66,7 +79,7 @@ internal static class StartupExtensions
             throw new NotImplementedException("TODO: Enable Redis Caching");
         }
 
-        services.AddSingleton<ICachingService, CachingService>();
+        services.TryAdd(ServiceDescriptor.Singleton<ICachingService, CachingService>());
 
         return services;
     }
@@ -75,7 +88,7 @@ internal static class StartupExtensions
     
     #region Health Checks
     
-    internal static IServiceCollection AddBackendHealthChecks(this IServiceCollection services)
+    public static IServiceCollection AddBackendHealthChecks(this IServiceCollection services)
     {
         services.AddSingleton<IConnectionHealthCheck, ConnectionHealthCheck>();
 
@@ -88,7 +101,7 @@ internal static class StartupExtensions
     }
     
     // TODO: Make constraint type more versatile, see also: https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/generics/generic-interfaces 
-    internal static IEndpointConventionBuilder MapConnectionHealthCheck<T>(this IEndpointRouteBuilder endpoints) where T : IConnectionHealthCheck
+    public static IEndpointConventionBuilder MapConnectionHealthCheck<T>(this IEndpointRouteBuilder endpoints) where T : IConnectionHealthCheck
     {
         var healthCheck = endpoints.ServiceProvider.GetRequiredService<T>();
         
@@ -108,7 +121,7 @@ internal static class StartupExtensions
 
     #region Swagger
 
-    internal static IServiceCollection AddBackendDocumentation(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddBackendDocumentation(this IServiceCollection services, IConfiguration configuration)
     {
         var settings = configuration.GetRequiredSection(nameof(AppSettings)).Get<AppSettings>();
 
@@ -119,7 +132,7 @@ internal static class StartupExtensions
             option.ApiVersionReader = new MediaTypeApiVersionReader("api-version");
         }).AddMvc().AddApiExplorer();
 
-        services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+        services.TryAdd(ServiceDescriptor.Transient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>());
         services.AddSwaggerGen(option => option.OperationFilter<SwaggerDefaultValues>());
 
         return services;

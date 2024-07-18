@@ -4,7 +4,7 @@ using AdvancedSystems.Backend.Responses;
 
 namespace AdvancedSystems.Backend.Interfaces;
 
-internal interface IConnectionHealthCheck
+public interface IConnectionHealthCheck
 {
-    Task<ConnectionHealthCheckResponse> GetResult();
+    ValueTask<ConnectionHealthCheckResponse> GetResult();
 }

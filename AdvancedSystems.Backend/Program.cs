@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-using AdvancedSystems.Backend.Core;
+using AdvancedSystems.Backend.DependencyInjection;
 
 namespace AdvancedSystems.Backend;
 

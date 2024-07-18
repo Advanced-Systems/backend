@@ -14,28 +14,28 @@ using Microsoft.Extensions.Logging;
 
 using NLog.Extensions.Logging;
 
-namespace AdvancedSystems.Backend.Core;
+namespace AdvancedSystems.Backend.DependencyInjection;
 
-internal static class Startup
+public static class Startup
 {
-    internal static WebApplicationBuilder ConfigureBuilder(string[] args)
+    public static WebApplicationBuilder ConfigureBuilder(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        
+
         builder.Configuration.SetBasePath(Directory.GetCurrentDirectory())
                     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
                     .AddEnvironmentVariables();
-        
+
         builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
         builder.Services.AddSingleton<IHostEnvironment>(builder.Environment);
 
         return builder;
     }
 
-    internal static IServiceCollection ConfigureServices(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
+    public static IServiceCollection ConfigureServices(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
     {
-        
+
         services.AddBackendSettings(configuration);
 
         services.AddLogging(options =>
@@ -63,13 +63,17 @@ internal static class Startup
         return services;
     }
 
-    internal static void Configure(this WebApplication app, IHostEnvironment environment)
+    public static void Configure(this WebApplication app, IHostEnvironment environment)
     {
+        app.UseStatusCodePages();
+        app.UseExceptionHandler();
+
         if (environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
-            app.UseSwaggerUI(option => {
+            app.UseSwaggerUI(option =>
+            {
                 foreach (ApiVersionDescription description in app.DescribeApiVersions())
                 {
                     option.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName);
@@ -86,7 +90,7 @@ internal static class Startup
         app.UseExceptionHandler();
 
         app.UseRouting();
-        
+
         app.MapConnectionHealthCheck<IConnectionHealthCheck>();
 
         app.MapControllers();

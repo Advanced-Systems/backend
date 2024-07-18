@@ -1,9 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
+    <!-- Project Information -->
     <Authors>Stefan Greve</Authors>
     <Company>Advanced Systems</Company>
+    <!-- Build Information -->
     <TargetFramework>net8.0</TargetFramework>
+    <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+    <!-- Language Features -->
+    <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -31,11 +37,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Update="appsettings.development.json" CopyToPublishDirectory="Never">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    <Content Update="appsettings.development.json" CopyToPublishDirectory="PreserveNewest">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="appsettings.json" CopyToPublishDirectory="Always">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Update="appsettings.json" CopyToPublishDirectory="PreserveNewest">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 

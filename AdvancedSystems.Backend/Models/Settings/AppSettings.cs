@@ -2,8 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AdvancedSystems.Backend.Models.Settings;
 
-public record AppSettings
+public class AppSettings
 {
     [Required]
-    public double DefaultApiVersion { get; init; }
+    public required double DefaultApiVersion { get; init; }
 }

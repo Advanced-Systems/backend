@@ -9,15 +9,16 @@ using Microsoft.Extensions.Logging;
 
 namespace AdvancedSystems.Backend.Services.HealthChecks;
 
-internal sealed class ConnectionHealthCheck : IConnectionHealthCheck, IHealthCheck
+public sealed class ConnectionHealthCheck : IConnectionHealthCheck, IHealthCheck
 {
     private readonly ILogger<IConnectionHealthCheck> _logger;
+
     public ConnectionHealthCheck(ILogger<IConnectionHealthCheck> logger)
     {
         _logger = logger;
     }
 
-    public async Task<ConnectionHealthCheckResponse> GetResult()
+    public async ValueTask<ConnectionHealthCheckResponse> GetResult()
     {
         return await Task.FromResult(new ConnectionHealthCheckResponse
         {
@@ -32,7 +33,7 @@ internal sealed class ConnectionHealthCheck : IConnectionHealthCheck, IHealthChe
 
         if (result.IsHealthy) return HealthCheckResult.Healthy(result.Description);
 
-        this._logger.LogWarning("ConnectionHealthCheck reported an unhealthy status: {}", result);
+        this._logger.LogWarning("ConnectionHealthCheck reported an unhealthy status: {Result}", result);
         return HealthCheckResult.Unhealthy(result.Description);
 
     }
