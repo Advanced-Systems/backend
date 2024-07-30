@@ -1,4 +1,4 @@
-name: ASP.NET Core CI
+name: Unit Tests
 on:
   push:
     branches:
@@ -18,17 +18,17 @@ jobs:
     name: "Unit Tests for ${{ matrix.os }}"
     strategy:
       matrix:
-        os: [ ubuntu-latest, windows-latest ]
+        os: [ ubuntu-latest, macOS-latest, windows-latest ]
     steps:
-      - uses: actions/checkout@v3
-      - name: "Setup .NET Core SDK 7.0"
-        uses: actions/setup-dotnet@v3
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
-      - name: "Install Dependencies"
+      - name: Install Dependencies
         run: dotnet restore AdvancedSystems.Backend --configfile AdvancedSystems.Backend/nuget.config --verbosity minimal
-      - name: "Build Project"
+      - name: Build Project
         run: dotnet build AdvancedSystems.Backend --configuration Release --no-restore --nologo
-      - name: "Run Unit Tests"
+      - name: Run Unit Tests
         run: dotnet test AdvancedSystems.Backend.Tests --no-restore --verbosity normal
- 
+

@@ -1,24 +1,21 @@
 <p align="center">
   <a title="Project Logo">
-    <img height="150" style="margin-top:15px" src="https://raw.githubusercontent.com/Advanced-Systems/vector-assets/master/advanced-systems-logo-annotated.svg">
+    <img height="150" style="margin-top:15px" src="https://raw.githubusercontent.com/Advanced-Systems/assets/master/logos/svg/min/adv-logo.svg">
   </a>
 </p>
 
-<h1 align="center">Advanced Systems Backend Repository</h1>
+<h1 align="center">Advanced Systems Backend</h1>
+
+[![Unit Tests](https://github.com/Advanced-Systems/backend/actions/workflows/unit-tests.yml/badge.svg?branch=master)](https://github.com/Advanced-Systems/backend/actions/workflows/unit-tests.yml)
+[![CodeQL](https://github.com/Advanced-Systems/backend/actions/workflows/codeql.yml/badge.svg?branch=master)](https://github.com/Advanced-Systems/backend/actions/workflows/codeql.yml)
 
 ## About
 
-TODO
+The ASP.NET Core REST API for Advanced Systems.
 
 ## Developer Notes
 
 ### Prerequisites
-
-Project requirements:
-
-```powershell
-winget install microsoft.dotnet.sdk.8
-```
 
 Install and build the project on a developer machine:
 

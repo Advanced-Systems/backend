@@ -1,9 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
+    <!-- Project Information -->
     <Authors>Stefan Greve</Authors>
     <Company>Advanced Systems</Company>
+    <!-- Build Information -->
     <TargetFramework>net8.0</TargetFramework>
+    <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+    <!-- Language Features -->
+    <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -11,13 +17,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AdvancedSystems.Core" Version="8.0.0-alpha.3" />
     <PackageReference Include="Asp.Versioning.Http" Version="8.1.0" />
     <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
     <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.4" />
-    <PackageReference Include="NLog" Version="5.1.4" />
-    <PackageReference Include="NLog.Web.AspNetCore" Version="5.2.3" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.7" />
+    <PackageReference Include="NLog" Version="5.3.2" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.11" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
@@ -30,15 +37,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Update="appsettings.development.json" CopyToPublishDirectory="Never">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    <Content Update="appsettings.development.json" CopyToPublishDirectory="PreserveNewest">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="appsettings.json" CopyToPublishDirectory="Always">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Update="appsettings.json" CopyToPublishDirectory="PreserveNewest">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Controllers\" />
     <Folder Include="Models\Requests\" />
   </ItemGroup>
 
