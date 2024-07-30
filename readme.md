@@ -11,7 +11,7 @@
 
 ## About
 
-TODO
+The ASP.NET Core REST API for Advanced Systems.
 
 ## Developer Notes
 
