@@ -1,19 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <!-- Project Information -->
-    <Authors>Stefan Greve</Authors>
-    <Company>Advanced Systems</Company>
-    <!-- Build Information -->
+    <Version>0.0.0-alpha</Version>
     <TargetFramework>net8.0</TargetFramework>
-    <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
-    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
-    <!-- Language Features -->
-    <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>disable</ImplicitUsings>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <ChecksumAlgorithm>SHA256</ChecksumAlgorithm>
+    <Description>The Backend of Advanced Systems.</Description>
+    <RootNamespace>AdvancedSystems.Backend</RootNamespace>
+    <Title>Advanced Systems Backend</Title>
   </PropertyGroup>
 
   <ItemGroup>
@@ -43,11 +35,6 @@
     <Content Update="appsettings.json" CopyToPublishDirectory="PreserveNewest">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="Models\Requests\" />
   </ItemGroup>
 
 </Project>

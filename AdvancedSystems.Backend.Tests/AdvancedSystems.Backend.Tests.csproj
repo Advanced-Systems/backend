@@ -1,12 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <Authors>Stefan Greve</Authors>
-    <Company>Advanced Systems</Company>
     <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>disable</ImplicitUsings>
-    <IsPackable>false</IsPackable>
+    <Description>Unit test project for AdvancedSystems.Backend.</Description>
+    <RootNamespace>AdvancedSystems.Backend.Tests</RootNamespace>
+    <Title>Advanced Systems Backend Tests</Title>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,16 +12,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.5" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
-    <PackageReference Include="Moq" Version="4.18.4" />
-    <PackageReference Include="XUnit" Version="2.4.2" />
-    <PackageReference Include="XUnit.Analyzers" Version="1.1.0" />
-    <PackageReference Include="Xunit.Runner.Console" Version="2.4.2">
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.8" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.0" />
+    <PackageReference Include="Moq" Version="4.20.70" />
+    <PackageReference Include="XUnit" Version="2.9.0" />
+    <PackageReference Include="XUnit.Analyzers" Version="1.15.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Xunit.Runner.Console" Version="2.9.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Xunit.Runner.VisualStudio" Version="2.4.5">
+    <PackageReference Include="Xunit.Runner.VisualStudio" Version="2.8.2">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
