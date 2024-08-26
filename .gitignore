@@ -19,6 +19,7 @@ msbuild.wrn
 .vscode/
 .vs/
 .idea/
+appsettings.development.json
 
 # Cache
 *.swp

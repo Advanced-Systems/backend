@@ -3,6 +3,7 @@ using System.Net.Mime;
 
 using AdvancedSystems.Backend.Core.Validators;
 using AdvancedSystems.Backend.Interfaces;
+using AdvancedSystems.Backend.Models;
 using AdvancedSystems.Backend.Models.Settings;
 using AdvancedSystems.Backend.Services;
 using AdvancedSystems.Backend.Services.HealthChecks;
@@ -12,6 +13,7 @@ using AdvancedSystems.Core.Services;
 
 using Asp.Versioning;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
@@ -21,6 +23,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -86,9 +89,53 @@ public static class ServiceCollectionExtensions
     }
 
     #endregion
-    
+
+    #region Authentication and Authorization
+
+    public static IServiceCollection AddJwtAuth(this IServiceCollection services)
+    {
+        var authBuilder = services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        });
+
+        authBuilder.AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                // TODO: configure token validation parameters properly
+                IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("secret")),
+                ValidateIssuerSigningKey = true,
+                ValidateLifetime = true,
+                ValidIssuer = "issuer",
+                ValidAudience = "audience",
+                ValidateIssuer = true,
+                ValidateAudience = true,
+            };
+        });
+
+        services.AddJwtPolicy();
+
+        return services;
+    }
+
+    public static IServiceCollection AddJwtPolicy(this IServiceCollection services)
+    {
+        return services.AddAuthorization(options =>
+        {
+            options.AddPolicy(Roles.Admin, policy =>
+            {
+                policy.RequireClaim(CustomClaim.IsAdmin, "true");
+            });
+        });
+    }
+
+    #endregion
+
     #region Health Checks
-    
+
     public static IServiceCollection AddBackendHealthChecks(this IServiceCollection services)
     {
         services.AddSingleton<IConnectionHealthCheck, ConnectionHealthCheck>();
