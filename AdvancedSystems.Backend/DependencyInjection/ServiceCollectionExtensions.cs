@@ -127,7 +127,7 @@ public static class ServiceCollectionExtensions
         {
             options.AddPolicy(Roles.Admin, policy =>
             {
-                policy.RequireClaim(CustomClaim.IsAdmin, "true");
+                policy.RequireClaim(CustomClaim.IsAdmin, "true").RequireAuthenticatedUser();
             });
         });
     }
@@ -173,12 +173,16 @@ public static class ServiceCollectionExtensions
     {
         var settings = configuration.GetRequiredSection(nameof(AppSettings)).Get<AppSettings>();
 
-        services.AddApiVersioning(option => {
+        var apiVersionBuilder = services.AddApiVersioning(option => {
             option.DefaultApiVersion = new ApiVersion(settings!.DefaultApiVersion);
             option.AssumeDefaultVersionWhenUnspecified = true;
             option.ReportApiVersions = true;
             option.ApiVersionReader = new MediaTypeApiVersionReader("api-version");
-        }).AddMvc().AddApiExplorer();
+        });
+
+        apiVersionBuilder
+            .AddMvc()
+            .AddApiExplorer();
 
         services.TryAdd(ServiceDescriptor.Transient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>());
         services.AddSwaggerGen(option => option.OperationFilter<SwaggerDefaultValues>());
