@@ -54,6 +54,8 @@ public static class Startup
             options.LowercaseUrls = true;
         });
 
+        services.AddJwtAuth();
+
         services.AddControllers();
 
         services.AddBackendHealthChecks();
@@ -84,6 +86,9 @@ public static class Startup
         {
             app.UseHsts();
         }
+
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         app.UseHttpsRedirection();
         app.UseStatusCodePages();
