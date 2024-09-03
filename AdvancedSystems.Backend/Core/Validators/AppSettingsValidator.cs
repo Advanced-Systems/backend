@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 
+using AdvancedSystems.Backend.Models;
 using AdvancedSystems.Backend.Models.Settings;
 
 using Microsoft.Extensions.Hosting;
@@ -9,7 +10,10 @@ namespace AdvancedSystems.Backend.Core.Validators;
 
 public sealed class AppSettingsValidator : IValidateOptions<AppSettings>
 {
-    private static double[] _versions = new[] { 1.0, 2.0 };
+    private readonly double[] _versions = [
+        Versions.V1, 
+        Versions.V2,
+    ];
 
     private readonly IHostEnvironment _environment;
 
@@ -20,7 +24,7 @@ public sealed class AppSettingsValidator : IValidateOptions<AppSettings>
 
     public ValidateOptionsResult Validate(string? name, AppSettings options)
     {
-        if (!_versions.Contains(options.DefaultApiVersion))
+        if (!this._versions.Contains(options.DefaultApiVersion))
         {
             return ValidateOptionsResult.Fail($"Unsupported version number in configuration: {options.DefaultApiVersion} in {this._environment.EnvironmentName} environment.");
         }

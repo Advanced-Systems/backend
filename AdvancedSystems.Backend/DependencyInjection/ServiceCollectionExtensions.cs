@@ -126,11 +126,15 @@ public static class ServiceCollectionExtensions
     {
         var settings = configuration.GetRequiredSection(nameof(AppSettings)).Get<AppSettings>();
 
-        services.AddApiVersioning(option => {
-            option.DefaultApiVersion = new ApiVersion(settings!.DefaultApiVersion);
-            option.AssumeDefaultVersionWhenUnspecified = true;
-            option.ReportApiVersions = true;
-            option.ApiVersionReader = new MediaTypeApiVersionReader("api-version");
+        services.AddApiVersioning(options => {
+            options.DefaultApiVersion = new ApiVersion(settings!.DefaultApiVersion);
+            options.AssumeDefaultVersionWhenUnspecified = true;
+            options.ReportApiVersions = true;
+            options.ApiVersionReader = ApiVersionReader.Combine(
+                new QueryStringApiVersionReader("api-version"),
+                new HeaderApiVersionReader("x-api-version"),
+                new UrlSegmentApiVersionReader()
+            );
         }).AddMvc().AddApiExplorer();
 
         services.TryAdd(ServiceDescriptor.Transient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>());
