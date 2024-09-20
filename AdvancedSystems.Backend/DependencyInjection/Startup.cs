@@ -1,11 +1,11 @@
 using System.IO;
 
-using AdvancedSystems.Backend.Extensions;
 using AdvancedSystems.Backend.Interfaces;
 
 using Asp.Versioning.ApiExplorer;
 
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,25 +16,30 @@ using NLog.Extensions.Logging;
 
 namespace AdvancedSystems.Backend.DependencyInjection;
 
+/// <summary>
+///     Initializes services and middleware used by the web application.
+/// </summary>
 public static class Startup
 {
-    public static WebApplicationBuilder ConfigureBuilder(string[] args)
+    /// <summary>
+    ///     <inheritdoc cref="IStartup.ConfigureServices(IServiceCollection)" />
+    /// </summary>
+    /// <param name="builder">
+    ///     A builder for web applications and services.
+    /// </param>
+    /// <returns>
+    ///     The web application builder.
+    /// </returns>
+    public static WebApplicationBuilder ConfigureServices(this WebApplicationBuilder builder)
     {
-        var builder = WebApplication.CreateBuilder(args);
+        var services = builder.Services;
+        var configuration = builder.Configuration;
+        var environment = builder.Environment;
 
-        builder.Configuration.SetBasePath(Directory.GetCurrentDirectory())
-                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
-                    .AddEnvironmentVariables();
-
-        builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
-        builder.Services.AddSingleton<IHostEnvironment>(builder.Environment);
-
-        return builder;
-    }
-
-    public static IServiceCollection ConfigureServices(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
-    {
+        configuration.SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+            .AddEnvironmentVariables(); ;
 
         services.AddBackendSettings(configuration);
 
@@ -60,15 +65,29 @@ public static class Startup
         services.AddBackendDocumentation(configuration);
         services.AddBackendServices(environment);
 
-        return services;
+        return builder;
     }
 
-    public static void Configure(this WebApplication app, IHostEnvironment environment)
+    /// <summary>
+    ///     <inheritdoc cref="IStartup.Configure(IApplicationBuilder)" />
+    /// </summary>
+    /// <param name="app">
+    ///     <inheritdoc cref="WebApplication"/>
+    /// </param>
+    /// <returns>
+    ///     Returns the web application.
+    /// </returns>
+    public static WebApplication Configure(this WebApplication app)
     {
         app.UseStatusCodePages();
         app.UseExceptionHandler();
 
-        if (environment.IsDevelopment())
+        if (app.Environment.IsProduction())
+        {
+            app.UseHsts();
+        }
+
+        if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
@@ -80,21 +99,17 @@ public static class Startup
                 }
             });
         }
-        else
-        {
-            app.UseHsts();
-        }
 
         app.UseHttpsRedirection();
         app.UseStatusCodePages();
         app.UseExceptionHandler();
-
         app.UseRouting();
 
-        app.MapConnectionHealthCheck<IConnectionHealthCheck>();
+        app.AddHealthCheck<IConnectionHealthCheck>();
 
         app.MapControllers();
-
         app.UseAuthorization();
+
+        return app;
     }
 }

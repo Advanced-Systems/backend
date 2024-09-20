@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Mime;
 
+using AdvancedSystems.Backend.Core;
 using AdvancedSystems.Backend.Core.Validators;
 using AdvancedSystems.Backend.Interfaces;
 using AdvancedSystems.Backend.Models.Settings;
@@ -24,7 +25,7 @@ using Microsoft.Extensions.Options;
 
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace AdvancedSystems.Backend.Extensions;
+namespace AdvancedSystems.Backend.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
@@ -48,8 +49,47 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    #region Services
+    public static IServiceCollection AddBackendHealthChecks(this IServiceCollection services)
+    {
+        services.AddSingleton<IConnectionHealthCheck, ConnectionHealthCheck>();
 
+        var healthCheckBuilder = services.AddHealthChecks();        
+        healthCheckBuilder.AddCheck<ConnectionHealthCheck>(nameof(ConnectionHealthCheck));
+
+        return services;
+    }
+
+    public static IServiceCollection AddBackendDocumentation(this IServiceCollection services, IConfiguration configuration)
+    {
+        var settings = configuration.GetRequiredSection(nameof(AppSettings)).Get<AppSettings>();
+
+        services.AddApiVersioning(options => {
+            options.DefaultApiVersion = new ApiVersion(Versions.DEFAULT);
+            options.AssumeDefaultVersionWhenUnspecified = true;
+            options.ReportApiVersions = true;
+            options.ApiVersionReader = ApiVersionReader.Combine(
+                new HeaderApiVersionReader(Headers.API_VERSION),
+                new UrlSegmentApiVersionReader()
+            );
+        }).AddMvc().AddApiExplorer();
+
+        services.TryAdd(ServiceDescriptor.Transient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>());
+        services.AddSwaggerGen(option => option.OperationFilter<SwaggerDefaultValues>());
+
+        return services;
+    }
+
+    #region Service Registration
+
+    /// <summary>
+    ///     Adds the <seealso cref="GlobalExceptionHandler"/> to <paramref name="services"/>.
+    /// </summary>
+    /// <param name="services">
+    ///     The service collection containing the service.
+    /// </param>
+    /// <returns>
+    ///     The value of <paramref name="services"/>.
+    /// </returns>
     public static IServiceCollection AddGlobalExceptionHandler(this IServiceCollection services)
     {
         services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -65,6 +105,18 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
+    /// <summary>
+    ///      Adds a default implementation of <seealso cref="ICachingService"/> to <paramref name="services"/>.
+    /// </summary>
+    /// <param name="services">
+    ///     The service collection containing the service.
+    /// </param>
+    /// <param name="environment">
+    ///     The hosting environment the web application is running in.
+    /// </param>
+    /// <returns>
+    ///     The value of <paramref name="services"/>.
+    /// </returns>
     public static IServiceCollection AddCachingService(this IServiceCollection services, IHostEnvironment environment)
     {
         if (environment.IsDevelopment())
@@ -85,27 +137,23 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    #endregion
-    
-    #region Health Checks
-    
-    public static IServiceCollection AddBackendHealthChecks(this IServiceCollection services)
-    {
-        services.AddSingleton<IConnectionHealthCheck, ConnectionHealthCheck>();
-
-        var healthCheckBuilder = services.AddHealthChecks();
-        
-        healthCheckBuilder
-            .AddCheck<ConnectionHealthCheck>(nameof(ConnectionHealthCheck));
-
-        return services;
-    }
-    
-    // TODO: Make constraint type more versatile, see also: https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/generics/generic-interfaces 
-    public static IEndpointConventionBuilder MapConnectionHealthCheck<T>(this IEndpointRouteBuilder endpoints) where T : IConnectionHealthCheck
+    /// <summary>
+    ///     Adds a health check endpoint for a specified <see cref="IConnectionHealthCheck"/> implementation.
+    /// </summary>
+    /// <typeparam name="T">
+    ///     The type that implements <see cref="IConnectionHealthCheck"/> used to perform the health check.
+    /// </typeparam>
+    /// <param name="endpoints">
+    ///     An <see cref="IEndpointRouteBuilder"/> instance that defines the routing for the health check endpoint.
+    /// </param>
+    /// <returns>
+    ///     An <see cref="IEndpointConventionBuilder"/> that can be used to further configure the health check endpoint.
+    /// </returns>
+    public static IEndpointConventionBuilder AddHealthCheck<T>(this IEndpointRouteBuilder endpoints) where T : IConnectionHealthCheck
     {
         var healthCheck = endpoints.ServiceProvider.GetRequiredService<T>();
-        
+
+        // TODO: Make constraint type more versatile, see also: https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/generics/generic-interfaces 
         return endpoints.MapHealthChecks("/healthcheck", new HealthCheckOptions
         {
             AllowCachingResponses = true,
@@ -116,31 +164,6 @@ public static class ServiceCollectionExtensions
                 await context.Response.WriteAsJsonAsync(result);
             }
         });
-    }
-    
-    #endregion
-
-    #region Swagger
-
-    public static IServiceCollection AddBackendDocumentation(this IServiceCollection services, IConfiguration configuration)
-    {
-        var settings = configuration.GetRequiredSection(nameof(AppSettings)).Get<AppSettings>();
-
-        services.AddApiVersioning(options => {
-            options.DefaultApiVersion = new ApiVersion(settings!.DefaultApiVersion);
-            options.AssumeDefaultVersionWhenUnspecified = true;
-            options.ReportApiVersions = true;
-            options.ApiVersionReader = ApiVersionReader.Combine(
-                new QueryStringApiVersionReader("api-version"),
-                new HeaderApiVersionReader("x-api-version"),
-                new UrlSegmentApiVersionReader()
-            );
-        }).AddMvc().AddApiExplorer();
-
-        services.TryAdd(ServiceDescriptor.Transient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>());
-        services.AddSwaggerGen(option => option.OperationFilter<SwaggerDefaultValues>());
-
-        return services;
     }
 
     #endregion

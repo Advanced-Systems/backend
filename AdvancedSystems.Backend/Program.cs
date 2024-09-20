@@ -2,20 +2,27 @@ using System.Threading.Tasks;
 
 using AdvancedSystems.Backend.DependencyInjection;
 
+using Microsoft.AspNetCore.Builder;
+
 namespace AdvancedSystems.Backend;
 
 public static class Program
 {
+    /// <summary>
+    ///     Defines the entry point of the application.
+    /// </summary>
+    /// <param name="args">
+    ///     Optional command line arguments.
+    /// </param>
+    /// <returns>
+    ///     An asynchronous task to wait.
+    /// </returns>
     public static async Task Main(string[] args)
     {
-        var builder = Startup.ConfigureBuilder(args);
-        var configuration = builder.Configuration;
-        var environment = builder.Environment;
-        
-        builder.Services.ConfigureServices(configuration, environment);
-
-        var backend = builder.Build();
-        backend.Configure(environment);
-        await backend.RunAsync();
+        await WebApplication.CreateBuilder(args)
+            .ConfigureServices()
+            .Build()
+            .Configure()
+            .RunAsync();
     }
 }
