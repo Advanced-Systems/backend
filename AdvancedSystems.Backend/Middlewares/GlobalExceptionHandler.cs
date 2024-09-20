@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace AdvancedSystems.Backend.Services;
+namespace AdvancedSystems.Backend.Middlewares;
 
 public sealed class GlobalExceptionHandler : IExceptionHandler
 {
@@ -18,8 +17,8 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
 
     public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IProblemDetailsService problemDetailsService)
     {
-        this._logger = logger;
-        this._problemDetailsService = problemDetailsService;
+        _logger = logger;
+        _problemDetailsService = problemDetailsService;
     }
 
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
@@ -36,11 +35,11 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
             Detail = handledException.Message,
         };
 
-        this._logger.LogError(problem.Detail, handledException);
+        _logger.LogError(problem.Detail, handledException);
         httpContext.Response.ContentType = MediaTypeNames.Application.Json;
         httpContext.Response.StatusCode = statusCode;
 
-        return await this._problemDetailsService.TryWriteAsync(new ProblemDetailsContext
+        return await _problemDetailsService.TryWriteAsync(new ProblemDetailsContext
         {
             HttpContext = httpContext,
             ProblemDetails = problem,
