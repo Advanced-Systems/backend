@@ -1,5 +1,5 @@
-using System.Text;
 using System;
+using System.Text;
 
 using Asp.Versioning.ApiExplorer;
 
@@ -11,7 +11,7 @@ using Microsoft.OpenApi.Models;
 
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace AdvancedSystems.Backend.Swagger;
+namespace AdvancedSystems.Backend.Services;
 
 /// <summary>
 ///     Configures the Swagger generation options.
@@ -28,8 +28,8 @@ public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
 
     public ConfigureSwaggerOptions(IApiVersionDescriptionProvider provider, IHostEnvironment environment)
     {
-        this._provider = provider;
-        this._environment = environment;
+        _provider = provider;
+        _environment = environment;
     }
 
     #region Implementation
@@ -37,9 +37,9 @@ public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
     /// <inheritdoc />
     public void Configure(SwaggerGenOptions options)
     {
-        foreach (ApiVersionDescription description in this._provider.ApiVersionDescriptions)
+        foreach (ApiVersionDescription description in _provider.ApiVersionDescriptions)
         {
-            options.SwaggerDoc(description.GroupName, this.CreateInfoForApiVersion(description));
+            options.SwaggerDoc(description.GroupName, CreateInfoForApiVersion(description));
         }
     }
 
@@ -52,7 +52,7 @@ public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
         var text = new StringBuilder("The REST API of Advanced Systems.");
         var info = new OpenApiInfo()
         {
-            Title = this._environment.ApplicationName,
+            Title = _environment.ApplicationName,
             Version = description.ApiVersion.ToString(),
             Contact = new OpenApiContact() { Name = "Stefan Greve", Email = "greve.stefan@outlook.jp" },
             License = new OpenApiLicense() { Name = "MIT", Url = new Uri("https://opensource.org/licenses/MIT") }

@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AdvancedSystems.Backend.Abstractions\AdvancedSystems.Backend.Abstractions.csproj" />
     <ProjectReference Include="..\AdvancedSystems.Backend\AdvancedSystems.Backend.csproj" />
   </ItemGroup>
 

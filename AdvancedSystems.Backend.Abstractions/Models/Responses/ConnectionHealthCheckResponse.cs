@@ -1,4 +1,4 @@
-namespace AdvancedSystems.Backend.Responses;
+namespace AdvancedSystems.Backend.Abstractions.Models.Responses;
 
 public readonly record struct ConnectionHealthCheckResponse
 {

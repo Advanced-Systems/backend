@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Version>0.0.0-alpha</Version>
+    <TargetFramework>net8.0</TargetFramework>
+    <Description>The Abstractions for the Backend of Advanced Systems.</Description>
+    <RootNamespace>AdvancedSystems.Backend.Abstractions</RootNamespace>
+    <Title>Advanced Systems Backend Abstractions</Title>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\Requests\" />
+  </ItemGroup>
+
+</Project>

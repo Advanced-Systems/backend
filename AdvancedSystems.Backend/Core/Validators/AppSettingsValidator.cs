@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 
-using AdvancedSystems.Backend.Models;
-using AdvancedSystems.Backend.Models.Settings;
+using AdvancedSystems.Backend.Options;
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;

@@ -1,13 +1,13 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-using AdvancedSystems.Backend.Interfaces;
-using AdvancedSystems.Backend.Responses;
+using AdvancedSystems.Backend.Abstractions.Interfaces;
+using AdvancedSystems.Backend.Abstractions.Models.Responses;
 
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 
-namespace AdvancedSystems.Backend.Services.HealthChecks;
+namespace AdvancedSystems.Backend.Services;
 
 public sealed class ConnectionHealthCheck : IConnectionHealthCheck, IHealthCheck
 {
@@ -29,11 +29,11 @@ public sealed class ConnectionHealthCheck : IConnectionHealthCheck, IHealthCheck
 
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
-        var result = await this.GetResult();
+        var result = await GetResult();
 
         if (result.IsHealthy) return HealthCheckResult.Healthy(result.Description);
 
-        this._logger.LogWarning("ConnectionHealthCheck reported an unhealthy status: {Result}", result);
+        _logger.LogWarning("ConnectionHealthCheck reported an unhealthy status: {Result}", result);
         return HealthCheckResult.Unhealthy(result.Description);
 
     }

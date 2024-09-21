@@ -29,6 +29,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AdvancedSystems.Backend.Abstractions\AdvancedSystems.Backend.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Update="appsettings.development.json" CopyToPublishDirectory="PreserveNewest">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

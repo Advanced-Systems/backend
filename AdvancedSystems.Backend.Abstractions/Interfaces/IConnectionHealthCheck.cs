@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 
-using AdvancedSystems.Backend.Responses;
+using AdvancedSystems.Backend.Abstractions.Models.Responses;
 
-namespace AdvancedSystems.Backend.Interfaces;
+namespace AdvancedSystems.Backend.Abstractions.Interfaces;
 
 public interface IConnectionHealthCheck
 {

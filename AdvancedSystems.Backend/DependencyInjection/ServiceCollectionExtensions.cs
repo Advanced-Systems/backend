@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Net.Mime;
 
+using AdvancedSystems.Backend.Abstractions.Interfaces;
 using AdvancedSystems.Backend.Core;
 using AdvancedSystems.Backend.Core.Validators;
-using AdvancedSystems.Backend.Interfaces;
 using AdvancedSystems.Backend.Middlewares;
-using AdvancedSystems.Backend.Models.Settings;
-using AdvancedSystems.Backend.Services.HealthChecks;
-using AdvancedSystems.Backend.Swagger;
+using AdvancedSystems.Backend.Options;
+using AdvancedSystems.Backend.Services;
 using AdvancedSystems.Core.Abstractions;
 using AdvancedSystems.Core.Services;
 

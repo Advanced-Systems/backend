@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace AdvancedSystems.Backend.Models.Settings;
+namespace AdvancedSystems.Backend.Options;
 
 public class AppSettings
 {
