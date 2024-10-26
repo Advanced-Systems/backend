@@ -35,6 +35,22 @@ public static class Startup
         var services = builder.Services;
         var configuration = builder.Configuration;
         var environment = builder.Environment;
+        var host = builder.Host;
+
+        host.UseDefaultServiceProvider((context, options) =>
+        {
+            if (context.HostingEnvironment.IsDevelopment())
+            {
+                options.ValidateScopes = true;
+                options.ValidateOnBuild = true;
+            }
+            else
+            {
+                // Disable validation in production for performance reasons
+                options.ValidateScopes = false;
+                options.ValidateOnBuild = false;
+            }
+        });
 
         configuration.SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)

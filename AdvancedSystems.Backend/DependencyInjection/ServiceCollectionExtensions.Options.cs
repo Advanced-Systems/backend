@@ -1,8 +1,9 @@
 ﻿using System;
 
+using AdvancedSystems.Backend.Configuration;
 using AdvancedSystems.Backend.Core;
 using AdvancedSystems.Backend.Core.Validators;
-using AdvancedSystems.Backend.Configuration;
+using AdvancedSystems.Core.DependencyInjection;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,9 +1,11 @@
-﻿using System.Net.Mime;
+﻿using System;
+using System.Net.Mime;
 
 using AdvancedSystems.Backend.Abstractions.Interfaces;
 using AdvancedSystems.Backend.Configuration;
 using AdvancedSystems.Backend.Core;
 using AdvancedSystems.Backend.Services;
+using AdvancedSystems.Core.DependencyInjection;
 
 using Asp.Versioning;
 
@@ -32,7 +34,20 @@ public static partial class ServiceCollectionExtensions
 
     public static IServiceCollection AddBackendServices(this IServiceCollection services, IHostEnvironment environment)
     {
-        services.AddCachingService(environment);
+        if (environment.IsDevelopment())
+        {
+            // Should only be used in single server scenarios as this cache stores items in memory and doesn't
+            // expand across multiple machines. For those scenarios it is recommended to use a proper distributed
+            // cache that can expand across multiple machines.
+            services.AddDistributedMemoryCache();
+        }
+        else
+        {
+            // See also: https://learn.microsoft.com/en-us/aspnet/core/performance/caching/distributed?view=aspnetcore-8.0#distributed-redis-cache
+            throw new NotImplementedException("TODO: Enable Redis Caching");
+        }
+
+        services.AddCachingService();
         services.AddGlobalExceptionHandler();
         services.AddInfrastructureService();
 
