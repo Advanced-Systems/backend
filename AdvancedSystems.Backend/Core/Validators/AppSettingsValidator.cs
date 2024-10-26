@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-using AdvancedSystems.Backend.Options;
+using AdvancedSystems.Backend.Configuration;
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -10,8 +10,7 @@ namespace AdvancedSystems.Backend.Core.Validators;
 public sealed class AppSettingsValidator : IValidateOptions<AppSettings>
 {
     private readonly double[] _versions = [
-        Versions.V1, 
-        Versions.V2,
+        Versions.V1,
     ];
 
     private readonly IHostEnvironment _environment;

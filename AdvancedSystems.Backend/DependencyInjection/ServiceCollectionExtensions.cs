@@ -1,14 +1,9 @@
-﻿using System;
-using System.Net.Mime;
+﻿using System.Net.Mime;
 
 using AdvancedSystems.Backend.Abstractions.Interfaces;
+using AdvancedSystems.Backend.Configuration;
 using AdvancedSystems.Backend.Core;
-using AdvancedSystems.Backend.Core.Validators;
-using AdvancedSystems.Backend.Middlewares;
-using AdvancedSystems.Backend.Options;
 using AdvancedSystems.Backend.Services;
-using AdvancedSystems.Core.Abstractions;
-using AdvancedSystems.Core.Services;
 
 using Asp.Versioning;
 
@@ -26,24 +21,20 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace AdvancedSystems.Backend.DependencyInjection;
 
-public static class ServiceCollectionExtensions
+public static partial class ServiceCollectionExtensions
 {
     public static IServiceCollection AddBackendSettings(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddOptions<AppSettings>()
-                .Bind(configuration.GetRequiredSection(nameof(AppSettings)))
-                .ValidateDataAnnotations()
-                .ValidateOnStart();
-
-        services.AddSingleton<IValidateOptions<AppSettings>, AppSettingsValidator>();
+        services.AddAppSettings(configuration);
 
         return services;
     }
 
     public static IServiceCollection AddBackendServices(this IServiceCollection services, IHostEnvironment environment)
     {
-        services.AddGlobalExceptionHandler();
         services.AddCachingService(environment);
+        services.AddGlobalExceptionHandler();
+        services.AddInfrastructureService();
 
         return services;
     }
@@ -78,64 +69,6 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    #region Service Registration
-
-    /// <summary>
-    ///     Adds the <seealso cref="GlobalExceptionHandler"/> to <paramref name="services"/>.
-    /// </summary>
-    /// <param name="services">
-    ///     The service collection containing the service.
-    /// </param>
-    /// <returns>
-    ///     The value of <paramref name="services"/>.
-    /// </returns>
-    public static IServiceCollection AddGlobalExceptionHandler(this IServiceCollection services)
-    {
-        services.AddExceptionHandler<GlobalExceptionHandler>();
-        services.AddProblemDetails(options =>
-        {
-            options.CustomizeProblemDetails = ctx =>
-            {
-                ctx.ProblemDetails.Extensions.Add("instance", $"{ctx.HttpContext.Request.Method} {ctx.HttpContext.Request.Path}");
-                ctx.ProblemDetails.Extensions.Remove("exception");
-            };
-        });
-
-        return services;
-    }
-
-    /// <summary>
-    ///      Adds a default implementation of <seealso cref="ICachingService"/> to <paramref name="services"/>.
-    /// </summary>
-    /// <param name="services">
-    ///     The service collection containing the service.
-    /// </param>
-    /// <param name="environment">
-    ///     The hosting environment the web application is running in.
-    /// </param>
-    /// <returns>
-    ///     The value of <paramref name="services"/>.
-    /// </returns>
-    public static IServiceCollection AddCachingService(this IServiceCollection services, IHostEnvironment environment)
-    {
-        if (environment.IsDevelopment())
-        {
-            // Should only be used in single server scenarios as this cache stores items in memory and doesn't
-            // expand across multiple machines. For those scenarios it is recommended to use a proper distributed
-            // cache that can expand across multiple machines.
-            services.AddDistributedMemoryCache();
-        }
-        else
-        {
-            // See also: https://learn.microsoft.com/en-us/aspnet/core/performance/caching/distributed?view=aspnetcore-8.0#distributed-redis-cache
-            throw new NotImplementedException("TODO: Enable Redis Caching");
-        }
-
-        services.TryAdd(ServiceDescriptor.Singleton<ICachingService, CachingService>());
-
-        return services;
-    }
-
     /// <summary>
     ///     Adds a health check endpoint for a specified <see cref="IConnectionHealthCheck"/> implementation.
     /// </summary>
@@ -164,6 +97,4 @@ public static class ServiceCollectionExtensions
             }
         });
     }
-
-    #endregion
 }

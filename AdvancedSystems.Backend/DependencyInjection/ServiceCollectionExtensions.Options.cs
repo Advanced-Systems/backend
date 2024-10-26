@@ -1,0 +1,37 @@
+﻿using System;
+
+using AdvancedSystems.Backend.Core;
+using AdvancedSystems.Backend.Core.Validators;
+using AdvancedSystems.Backend.Configuration;
+
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+
+namespace AdvancedSystems.Backend.DependencyInjection;
+
+public static partial class ServiceCollectionExtensions
+{
+    /// <summary>
+    ///     Registers and binds <seealso cref="AppSettings"/> to the underlying <paramref name="services"/> collection.
+    /// </summary>
+    /// <param name="services">
+    ///     The service collection containing the service.
+    /// </param>
+    /// <param name="configuration">
+    ///     The configuration instance containing the application settings.
+    /// </param>
+    /// <returns>
+    ///     The value of <paramref name="services"/>.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///     Raised if no matching sub-section is found with the value of <seealso cref="Sections.APP_SETTINGS"/>.
+    /// </exception>
+    public static IServiceCollection AddAppSettings(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.TryAddOptions<AppSettings>(configuration.GetRequiredSection(Sections.APP_SETTINGS));
+        services.AddSingleton<IValidateOptions<AppSettings>, AppSettingsValidator>();
+
+        return services;
+    }
+}
