@@ -1,11 +1,12 @@
 ﻿using System.Linq;
 
 using AdvancedSystems.Backend.Configuration;
+using AdvancedSystems.Backend.Core;
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
-namespace AdvancedSystems.Backend.Core.Validators;
+namespace AdvancedSystems.Backend.Services.Validators;
 
 public sealed class AppSettingsValidator : IValidateOptions<AppSettings>
 {

@@ -8,7 +8,7 @@ using Microsoft.OpenApi.Models;
 
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace AdvancedSystems.Backend.Services;
+namespace AdvancedSystems.Backend.Services.Swagger;
 
 /// <summary>
 ///     Represents the OpenAPI/Swashbuckle operation filter used to document information provided, but not used.

@@ -5,6 +5,7 @@ using AdvancedSystems.Backend.Abstractions.Interfaces;
 using AdvancedSystems.Backend.Configuration;
 using AdvancedSystems.Backend.Core;
 using AdvancedSystems.Backend.Services;
+using AdvancedSystems.Backend.Services.Swagger;
 using AdvancedSystems.Core.DependencyInjection;
 
 using Asp.Versioning;

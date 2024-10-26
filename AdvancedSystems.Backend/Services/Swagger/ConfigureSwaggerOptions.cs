@@ -11,7 +11,7 @@ using Microsoft.OpenApi.Models;
 
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace AdvancedSystems.Backend.Services;
+namespace AdvancedSystems.Backend.Services.Swagger;
 
 /// <summary>
 ///     Configures the Swagger generation options.
