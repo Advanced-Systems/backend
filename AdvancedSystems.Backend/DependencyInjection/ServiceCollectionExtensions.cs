@@ -58,7 +58,7 @@ public static partial class ServiceCollectionExtensions
     {
         services.AddSingleton<IConnectionHealthCheck, ConnectionHealthCheck>();
 
-        var healthCheckBuilder = services.AddHealthChecks();        
+        var healthCheckBuilder = services.AddHealthChecks();
         healthCheckBuilder.AddCheck<ConnectionHealthCheck>(nameof(ConnectionHealthCheck));
 
         return services;
@@ -68,7 +68,8 @@ public static partial class ServiceCollectionExtensions
     {
         var settings = configuration.GetRequiredSection(nameof(AppSettings)).Get<AppSettings>();
 
-        services.AddApiVersioning(options => {
+        services.AddApiVersioning(options =>
+        {
             options.DefaultApiVersion = new ApiVersion(Versions.DEFAULT);
             options.AssumeDefaultVersionWhenUnspecified = true;
             options.ReportApiVersions = true;

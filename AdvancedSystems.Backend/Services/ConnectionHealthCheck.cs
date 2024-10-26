@@ -15,8 +15,10 @@ public sealed class ConnectionHealthCheck : IConnectionHealthCheck, IHealthCheck
 
     public ConnectionHealthCheck(ILogger<IConnectionHealthCheck> logger)
     {
-        _logger = logger;
+        this._logger = logger;
     }
+
+    #region Public Methods
 
     public async ValueTask<ConnectionHealthCheckResponse> GetResult()
     {
@@ -37,4 +39,6 @@ public sealed class ConnectionHealthCheck : IConnectionHealthCheck, IHealthCheck
         return HealthCheckResult.Unhealthy(result.Description);
 
     }
+
+    #endregion
 }

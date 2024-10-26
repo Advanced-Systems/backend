@@ -26,7 +26,7 @@ public static partial class ServiceCollectionExtensions
     ///     The value of <paramref name="services"/>.
     /// </returns>
     /// <exception cref="InvalidOperationException">
-    ///     Raised if no matching sub-section is found with the value of <seealso cref="Sections.APP_SETTINGS"/>.
+    ///     Raised if no matching sub-section with the value of <seealso cref="Sections.APP_SETTINGS"/> is found .
     /// </exception>
     public static IServiceCollection AddAppSettings(this IServiceCollection services, IConfiguration configuration)
     {

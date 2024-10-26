@@ -20,7 +20,7 @@ namespace AdvancedSystems.Backend.Services;
 /// <seealso hcref="https://github.com/dotnet/aspnet-api-versioning/blob/main/examples/AspNetCore/WebApi/OpenApiExample/SwaggerDefaultValues.cs"/>
 public class SwaggerDefaultValues : IOperationFilter
 {
-    #region Implementation
+    #region Public Methods
 
     /// <inheritdoc />
     public void Apply(OpenApiOperation operation, OperationFilterContext context)

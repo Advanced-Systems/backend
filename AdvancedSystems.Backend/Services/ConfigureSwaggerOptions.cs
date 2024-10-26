@@ -32,7 +32,7 @@ public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
         _environment = environment;
     }
 
-    #region Implementation
+    #region Public Methods
 
     /// <inheritdoc />
     public void Configure(SwaggerGenOptions options)
