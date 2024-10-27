@@ -1,6 +1,6 @@
 ﻿namespace AdvancedSystems.Backend.Core;
 
-internal readonly struct Routes
+internal static class Routes
 {
     /// <summary>
     ///     Evaluates to a versioned controller endpoint.

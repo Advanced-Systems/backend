@@ -3,7 +3,7 @@
 /// <summary>
 ///     Configures additional request headers.
 /// </summary>
-internal readonly struct Headers
+internal static class Headers
 {
     /// <summary>
     ///     Key used to specify the requested endpoint version in a controller.

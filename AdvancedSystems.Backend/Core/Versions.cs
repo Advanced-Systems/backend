@@ -1,6 +1,6 @@
 ﻿namespace AdvancedSystems.Backend.Core;
 
-internal readonly struct Versions
+internal static class Versions
 {
     internal const int V1 = 1;
 

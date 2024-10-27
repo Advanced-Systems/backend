@@ -17,8 +17,8 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
 
     public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IProblemDetailsService problemDetailsService)
     {
-        _logger = logger;
-        _problemDetailsService = problemDetailsService;
+        this._logger = logger;
+        this._problemDetailsService = problemDetailsService;
     }
 
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
@@ -35,11 +35,11 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
             Detail = handledException.Message,
         };
 
-        _logger.LogError(problem.Detail, handledException);
+        this._logger.LogError(problem.Detail, handledException);
         httpContext.Response.ContentType = MediaTypeNames.Application.Json;
         httpContext.Response.StatusCode = statusCode;
 
-        return await _problemDetailsService.TryWriteAsync(new ProblemDetailsContext
+        return await this._problemDetailsService.TryWriteAsync(new ProblemDetailsContext
         {
             HttpContext = httpContext,
             ProblemDetails = problem,
