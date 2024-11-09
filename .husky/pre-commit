@@ -1,0 +1,5 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# lint project based on editorconfig rules
+dotnet husky run --group pre-commit

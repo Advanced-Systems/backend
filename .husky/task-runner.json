@@ -1,0 +1,39 @@
+{
+    "$schema": "https://alirezanet.github.io/Husky.Net/schema.json",
+    "tasks": [
+       {
+          "name": "dotnet-format",
+          "group": "pre-commit",
+          "command": "dotnet",
+          "args": [
+             "format",
+             "--include",
+             "${staged}",
+             "--verbosity",
+             "diagnostic"
+          ],
+          "include": [
+             "**/*.cs",
+             "**/*.ps1"
+          ]
+       },
+       {
+          "name": "dotnet-build",
+          "group": "pre-push",
+          "command": "dotnet",
+          "args": [
+             "build",
+             "/warnaserror"
+          ]
+       },
+       {
+          "name": "dotnet-test",
+          "group": "pre-push",
+          "command": "dotnet",
+          "args": [
+             "test",
+             "--nologo"
+          ]
+       }
+    ]
+ }
